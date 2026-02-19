@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Results - SmartPrice Monitor</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/app-modern.css">
+    <link rel="stylesheet" href="css/hover-effects.css">
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛒</text></svg>">
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-left">
+            <a href="index.html" class="nav-brand">
+                <i class="fas fa-chart-line"></i>
+                <span>SmartPrice</span>
+            </a>
+        </div>
+        <div class="nav-center">
+            <!-- Search removed as per request -->
+        </div>
+        <div class="nav-right">
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="categories.html" class="nav-link">Categories</a>
+                <a href="wishlist.html" class="nav-link">Wishlist</a>
+                <a href="user-dashboard.html" class="nav-link nav-btn-highlight">Dashboard</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-container">
+        <div class="deals-layout">
+            <!-- Sidebar Filters -->
+            <aside class="sidebar-filters">
+                <div style="margin-bottom: 1.5rem;">
+                    <button class="btn btn-secondary" onclick="clearAllFilters()"
+                        style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 0.5rem; font-size: 0.85rem; padding: 0.75rem;">
+                        <i class="fas fa-undo-alt"></i> Clear All Filters
+                    </button>
+                </div>
+                <div class="filter-section">
+                    <h3 class="filter-title">Category</h3>
+                    <div class="checkbox-group" id="categoryFilterGroup">
+                        <label><input type="radio" name="category" value="" checked> All Categories</label>
+                        <label><input type="radio" name="category" value="electronics"> Electronics</label>
+                        <label><input type="radio" name="category" value="fashion"> Fashion</label>
+                        <label><input type="radio" name="category" value="home"> Home & Living</label>
+                        <label><input type="radio" name="category" value="grocery"> Groceries</label>
+                        <label><input type="radio" name="category" value="beauty"> Beauty</label>
+                        <label><input type="radio" name="category" value="automotive"> Automotive</label>
+                        <label><input type="radio" name="category" value="toys"> Toys & Games</label>
+                        <label><input type="radio" name="category" value="fitness"> Sports & Fitness</label>
+                    </div>
+                </div>
+
+                <div class="filter-section">
+                    <h3 class="filter-title">Price Range</h3>
+                    <div class="checkbox-group" id="priceFilterGroup">
+                        <label><input type="radio" name="price" value="" checked> All Prices</label>
+                        <label><input type="radio" name="price" value="0-1000"> Under ₹1,000</label>
+                        <label><input type="radio" name="price" value="1000-5000"> ₹1,000 - ₹5,000</label>
+                        <label><input type="radio" name="price" value="5000-20000"> ₹5,000 - ₹20,000</label>
+                        <label><input type="radio" name="price" value="20000-50000"> ₹20,000 - ₹50,000</label>
+                        <label><input type="radio" name="price" value="50000-999999"> Above ₹50,000</label>
+                    </div>
+                </div>
+
+                <div class="filter-section">
+                    <h3 class="filter-title">Platform</h3>
+                    <div class="checkbox-group" id="platformFilterGroup">
+                        <label><input type="radio" name="platform" value="" checked> All Platforms</label>
+                        <label><input type="radio" name="platform" value="amazon"> Amazon</label>
+                        <label><input type="radio" name="platform" value="flipkart"> Flipkart</label>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Main Content Area -->
+            <div class="deals-content">
+                <div class="header-top">
+                    <div class="header-title">
+                        <h1 id="pageTitle">Search Results</h1>
+                        <p id="resultsCount">Loading products...</p>
+                    </div>
+                    <div class="header-actions">
+                        <div class="view-toggles" style="display: flex; gap: 0.5rem; margin-right: 1rem;">
+                            <button id="gridViewBtn" class="view-btn active"
+                                style="background: var(--accent-blue); border-color: var(--accent-blue);"
+                                title="Grid View"><i class="fas fa-th-large"></i></button>
+                            <button id="listViewBtn" class="view-btn" title="List View"><i
+                                    class="fas fa-list"></i></button>
+                        </div>
+                        <!-- Sort Options -->
+                        <select id="sortFilter" class="view-btn"
+                            style="background: var(--bg-card); color: white; border: 1px solid var(--border-color);">
+                            <option value="relevance">Sort: Relevance</option>
+                            <option value="price-low">Price: Low to High</option>
+                            <option value="price-high">Price: High to Low</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Loading Spinner -->
+                <div id="loadingSpinner" class="loading" style="display: none; text-align: center; padding: 2rem;">
+                    <div class="spinner-border text-primary" role="status">
+                        <i class="fas fa-circle-notch fa-spin fa-2x" style="color: var(--accent-blue)"></i>
+                    </div>
+                </div>
+
+                <!-- Product Grid -->
+                <div id="productsGrid" class="items-grid">
+                    <!-- Products will be loaded dynamically -->
+                </div>
+
+                <!-- No Results -->
+                <div id="noResults" class="no-results" style="display: none; text-align: center; padding: 4rem;">
+                    <i class="fas fa-search" style="font-size: 3rem; color: var(--text-gray); margin-bottom: 1rem;"></i>
+                    <h3 style="color: white; margin-bottom: 0.5rem;">No products found</h3>
+                    <p style="color: var(--text-gray);">Try adjusting your search criteria or filters</p>
+                    <button class="btn btn-primary" onclick="clearAllFilters()" style="margin-top: 1rem;">Clear All
+                        Filters</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="modern-footer">
+        <div class="footer-grid" style="display: flex; justify-content: center; text-align: center;">
+            <div class="footer-brand">
+                <div class="brand-logo" style="justify-content: center; margin-bottom: 1rem;">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Smart Price</span>
+                </div>
+                <p style="max-width: 600px; margin: 0 auto;">Advanced price tracking and comparison tool helping you
+                    make smarter shopping decisions across major e-commerce platforms.</p>
+            </div>
+        </div>
+
+    </footer>
+
+    <!-- Platform Comparison Overlay -->
+    <div id="productModal" class="platform-modal-overlay">
+        <div class="platform-modal">
+            <h3 id="modalTitle" style="color: white; margin-bottom: 1rem;">Product Details</h3>
+            <div id="modalContent"></div>
+
+        </div>
+    </div>
+
+    <!-- Scroll to Top Button -->
+    <button id="scrollTopBtn" class="scroll-top-btn" title="Scroll to Top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- Scripts -->
+    <script src="js/data.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/comparison.js"></script>
+</body>
+
+</html>

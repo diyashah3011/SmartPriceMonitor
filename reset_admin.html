@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reset Admin Account</title>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0a0a0a;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background: rgba(31, 41, 55, 0.5);
+            padding: 2rem;
+            border-radius: 16px;
+            text-align: center;
+            max-width: 500px;
+        }
+
+        button {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin: 0.5rem;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        .success {
+            color: #10b981;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>🔧 Reset Admin Account</h1>
+        <p>Click the button below to reset the admin account with the new password.</p>
+        <button onclick="resetAdmin()">Reset Admin Account</button>
+        <div id="message"></div>
+        <div style="margin-top: 2rem;">
+            <a href="admin_login.html" style="color: #3b82f6; text-decoration: none;">Go to Admin Login</a>
+        </div>
+    </div>
+
+    <script src="js/data.js"></script>
+    <script>
+        function resetAdmin() {
+            const btn = document.querySelector('button');
+            const message = document.getElementById('message');
+
+            // Visual feedback
+            btn.innerHTML = 'Resetting...';
+            btn.disabled = true;
+
+            // Clear the current users from localStorage
+            localStorage.removeItem('smartPriceUsers');
+            localStorage.removeItem('currentUser');
+            localStorage.removeItem('portalSettings');
+
+            setTimeout(() => {
+                btn.innerHTML = 'Reset Successful!';
+                btn.style.background = '#10b981';
+                message.innerHTML = '<div class="success">✓ Admin account has been reset! You can now login with:<br>Username: smartpricemonitor<br>Password: smartpricemonitor12345</div>';
+
+                setTimeout(() => {
+                    window.location.href = 'admin_login.html';
+                }, 3000);
+            }, 1000);
+        }
+    </script>
+</body>
+
+</html>

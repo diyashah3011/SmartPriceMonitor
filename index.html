@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<!-- Main Landing Page - Search & Trending Products -->
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Price Monitor - Compare Prices & Save Money</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/app-modern.css">
+    <link rel="stylesheet" href="css/hover-effects.css">
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛒</text></svg>">
+    <style>
+        .hero-section {
+            padding: 8rem 2rem;
+            text-align: center;
+            background: radial-gradient(circle at top right, rgba(37, 99, 235, 0.1), transparent),
+                radial-gradient(circle at bottom left, rgba(16, 185, 129, 0.1), transparent);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 10%;
+            left: 5%;
+            width: 400px;
+            height: 400px;
+            background: var(--accent-blue);
+            filter: blur(150px);
+            opacity: 0.15;
+            z-index: -1;
+            animation: float 20s infinite alternate;
+        }
+
+        .hero-section::after {
+            content: '';
+            position: absolute;
+            bottom: 10%;
+            right: 5%;
+            width: 400px;
+            height: 400px;
+            background: var(--accent-green);
+            filter: blur(150px);
+            opacity: 0.1;
+            z-index: -1;
+            animation: float 25s infinite alternate-reverse;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            50% {
+                transform: translate(100px, 50px) scale(1.1);
+            }
+
+            100% {
+                transform: translate(-50px, 100px) scale(0.9);
+            }
+        }
+
+        .bg-blob {
+            position: fixed;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            filter: blur(120px);
+            z-index: -1;
+            opacity: 0.05;
+            pointer-events: none;
+        }
+
+        .blob-1 {
+            top: -200px;
+            right: -100px;
+            background: var(--accent-blue);
+            animation: pulse-blob 15s infinite;
+        }
+
+        .blob-2 {
+            bottom: -200px;
+            left: -100px;
+            background: var(--accent-green);
+            animation: pulse-blob 18s infinite reverse;
+        }
+
+        @keyframes pulse-blob {
+
+            0%,
+            100% {
+                transform: scale(1) translate(0, 0);
+            }
+
+            50% {
+                transform: scale(1.2) translate(50px, -50px);
+            }
+        }
+
+        .hero-badge {
+            display: inline-block;
+            padding: 0.5rem 1.2rem;
+            background: rgba(37, 99, 235, 0.1);
+            color: var(--accent-blue);
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 2rem;
+            animation: fadeIn 1s ease-out;
+        }
+
+        .hero-title {
+            font-size: 5.5rem;
+            font-weight: 900;
+            line-height: 0.9;
+            margin-bottom: 2rem;
+            letter-spacing: -2px;
+        }
+
+        .brand-text-unique {
+            display: block;
+            background: linear-gradient(135deg, #ffffff 30%, #3b82f6 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 10px 20px rgba(59, 130, 246, 0.4));
+        }
+
+        .monitor-text-unique {
+            display: block;
+            font-size: 1.8rem;
+            color: var(--accent-blue);
+            text-transform: uppercase;
+            letter-spacing: 15px;
+            font-weight: 500;
+            margin-top: 0.5rem;
+            opacity: 0.9;
+            filter: drop-shadow(0 0 10px rgba(59, 130, 246, 0.5));
+            animation: textGlow 3s infinite alternate;
+        }
+
+        @keyframes textGlow {
+            0% {
+                filter: drop-shadow(0 0 5px rgba(59, 130, 246, 0.4));
+                opacity: 0.7;
+            }
+
+            100% {
+                filter: drop-shadow(0 0 20px rgba(59, 130, 246, 0.8));
+                opacity: 1;
+            }
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            color: var(--text-gray);
+            max-width: 700px;
+            margin: 0 auto 3rem;
+        }
+
+        .main-search-container {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 10;
+        }
+
+        .main-search {
+            display: flex;
+            background: rgba(31, 41, 55, 0.8);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            padding: 0.5rem;
+            border-radius: 100px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            transition: all 0.3s;
+        }
+
+        .main-search:focus-within {
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .main-search input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: white;
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            outline: none;
+        }
+
+        .main-search button {
+            background: var(--accent-blue);
+            color: white;
+            border: none;
+            padding: 1rem 2.5rem;
+            border-radius: 100px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .main-search button:hover {
+            background: #2563eb;
+            transform: scale(1.05);
+        }
+
+        .section-padding {
+            padding: 6rem 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .trending-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 3rem;
+        }
+
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .category-card {
+            position: relative;
+            height: 400px;
+            border-radius: 24px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .category-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s;
+        }
+
+        .category-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom, transparent 30%, rgba(0, 0, 0, 0.9) 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 2rem;
+        }
+
+        .category-card:hover img {
+            transform: scale(1.1);
+        }
+
+        .category-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .stat-banner {
+            background: var(--bg-card);
+            border-top: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+            padding: 4rem 2rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 3rem;
+            text-align: center;
+        }
+
+        .stat-item h3 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            color: var(--accent-blue);
+        }
+
+        .items-grid .product-card {
+            background: rgba(21, 28, 37, 0.4) !important;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+        }
+
+        .items-grid .product-card:hover {
+            border-color: rgba(37, 99, 235, 0.3);
+            background: rgba(21, 28, 37, 0.6) !important;
+        }
+
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 3rem;
+            }
+
+            .hero-section {
+                padding: 5rem 1rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-blob blob-1"></div>
+    <div class="bg-blob blob-2"></div>
+    <nav class="navbar">
+        <div class="nav-left">
+            <a href="index.html" class="nav-brand">
+                <div class="brand-logo-container">
+                    <img src="https://ui-avatars.com/api/?name=SP&background=2563eb&color=fff" alt="Logo"
+                        class="brand-img">
+                </div>
+                <span>Smart Price</span>
+            </a>
+        </div>
+
+        <div class="nav-right">
+            <div class="nav-links">
+                <a href="user-dashboard.html" class="nav-link">Dashboard</a>
+                <a href="about.html" class="nav-link">About Us</a>
+                <a href="categories.html" class="nav-link">Categories</a>
+                <a href="comparison.html" class="nav-link">Deals</a>
+            </div>
+
+            <div class="nav-actions">
+                <a href="login.html" class="btn btn-primary" id="loginLink">Login</a>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <div class="hero-badge">Smart Shopping Assistant</div>
+            <h1 class="hero-title">
+                <span class="brand-text-unique">Smart Price</span>
+                <span class="monitor-text-unique">Monitor</span>
+            </h1>
+            <p class="hero-subtitle">
+                Track prices across Amazon, Flipkart, and Meesho in real-time. Get notified the instant the price drops
+                to your target.
+            </p>
+
+            <div class="main-search-container">
+                <form class="main-search" id="homeSearchForm" onsubmit="handleHeroSearch(event)">
+                    <input type="text" id="heroSearchInput"
+                        placeholder="What are you looking for today? (e.g. iPhone 15, MacBook Pro)">
+                    <button type="submit">Search Deals</button>
+                </form>
+                <div style="margin-top: 1.5rem; display: flex; gap: 1rem; justify-content: center;">
+                    <span style="color: var(--text-gray); font-size: 0.9rem;">Trending:</span>
+                    <a href="javascript:void(0)" onclick="searchProduct('iPhone 15')"
+                        style="color: white; font-size: 0.9rem; text-decoration: none; opacity: 0.7;">iPhone 15</a>
+                    <a href="javascript:void(0)" onclick="searchProduct('MacBook')"
+                        style="color: white; font-size: 0.9rem; text-decoration: none; opacity: 0.7;">MacBook</a>
+                    <a href="javascript:void(0)" onclick="searchProduct('Nike')"
+                        style="color: white; font-size: 0.9rem; text-decoration: none; opacity: 0.7;">Nike Shoes</a>
+                </div>
+            </div>
+
+            <!-- Scroll Indicator -->
+            <div class="scroll-indicator-icon" onclick="window.scrollBy({top: 600, behavior: 'smooth'})">
+                <i class="fas fa-chevron-down"></i>
+                <div style="font-size: 0.7rem; margin-top: 0.5rem; text-transform: uppercase; letter-spacing: 1px;">
+                    Scroll</div>
+            </div>
+        </section>
+
+
+        <!-- Categories Section -->
+        <section class="section-padding">
+            <div class="trending-header">
+                <div>
+                    <h2 style="font-size: 2.5rem; font-weight: 800; margin-bottom: 0.5rem;">Browse Categories</h2>
+                    <p style="color: var(--text-gray);">Intelligent comparison across all your favorite retailers.</p>
+                </div>
+                <a href="categories.html" class="btn btn-secondary">View All <i class="fas fa-arrow-right"
+                        style="margin-left: 0.5rem;"></i></a>
+            </div>
+
+            <div class="category-grid" id="categoryGrid">
+                <!-- Fallback Static Categories if JS hasn't loaded -->
+                <div class="category-card" onclick="navigateToCategory('electronics')">
+                    <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=600&q=80"
+                        alt="Electronics">
+                    <div class="category-overlay">
+                        <h3 style="font-size: 1.5rem; font-weight: 700;">Electronics</h3>
+                    </div>
+                </div>
+                <div class="category-card" onclick="navigateToCategory('fashion')">
+                    <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=600&q=80"
+                        alt="Fashion">
+                    <div class="category-overlay">
+                        <h3 style="font-size: 1.5rem; font-weight: 700;">Fashion</h3>
+                    </div>
+                </div>
+                <div class="category-card" onclick="navigateToCategory('home')">
+                    <img src="https://images.unsplash.com/photo-1484101403633-562f891dc89a?auto=format&fit=crop&w=600&q=80"
+                        alt="Home">
+                    <div class="category-overlay">
+                        <h3 style="font-size: 1.5rem; font-weight: 700;">Home & Living</h3>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Trending Products Section -->
+        <section class="section-padding" style="background: rgba(31, 41, 55, 0.3);">
+            <div class="trending-header">
+                <div>
+                    <h2 style="font-size: 2.5rem; font-weight: 800; margin-bottom: 0.5rem;">Budget Deals Under ₹500</h2>
+                    <p style="color: var(--text-gray);">Incredible value products that won't break the bank.</p>
+                </div>
+                <button class="btn btn-primary" onclick="window.location.href='comparison.html?filter=under500'">Explore
+                    Budget Deals</button>
+            </div>
+
+            <div class="items-grid" id="trendingProducts">
+                <!-- Dynamic products will be loaded here -->
+            </div>
+        </section>
+
+        <!-- Under 200 Deals Section -->
+        <section class="section-padding">
+            <div class="trending-header">
+                <div>
+                    <h2 style="font-size: 2.5rem; font-weight: 800; margin-bottom: 0.5rem; color: var(--accent-green);">
+                        Super Saver Deals Under ₹200</h2>
+                    <p style="color: var(--text-gray);">Grab these unbeatable offers before they run out!</p>
+                </div>
+                <button class="btn btn-primary" onclick="window.location.href='comparison.html?filter=under200'">View
+                    More</button>
+            </div>
+
+            <div class="items-grid" id="under200Products">
+                <!-- Dynamic products will be loaded here -->
+            </div>
+        </section>
+    </main>
+
+    <footer class="modern-footer">
+        <div class="footer-grid" style="display: flex; justify-content: center; text-align: center;">
+            <div class="footer-brand">
+                <div class="brand-logo" style="justify-content: center; margin-bottom: 1rem;">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Smart Price</span>
+                </div>
+                <p style="max-width: 600px; margin: 0 auto;">Advanced price tracking and real-time alerts to help you
+                    save money on every purchase across all major retailers. Join thousands of smart shoppers today.</p>
+            </div>
+        </div>
+
+    </footer>
+
+    <script src="js/data.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+        function handleHeroSearch(e) {
+            e.preventDefault();
+            const input = document.getElementById('heroSearchInput');
+            const query = input ? input.value.trim() : '';
+            if (query) {
+                localStorage.setItem('searchQuery', query);
+                window.location.href = 'comparison.html';
+            }
+        }
+
+        function searchProduct(name) {
+            const q = (name || '').toString().trim();
+            if (q) {
+                localStorage.setItem('searchQuery', q);
+                window.location.href = 'comparison.html';
+            }
+        }
+
+        // Initialize categories if data is available
+        window.addEventListener('load', () => {
+            if (typeof categories !== 'undefined') {
+                const grid = document.getElementById('categoryGrid');
+                // Optional: Dynamic category rendering if needed
+            }
+        });
+    </script>
+</body>
+
+</html>

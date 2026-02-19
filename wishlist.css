@@ -1,0 +1,466 @@
+/* Wishlist Page Styles */
+
+.wishlist-container {
+    min-height: calc(100vh - 80px);
+    padding: 2rem 0;
+    background: #f8fafc;
+}
+
+.wishlist-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #e5e7eb;
+}
+
+.wishlist-header h1 {
+    color: #1f2937;
+    font-size: 2.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.wishlist-header i {
+    color: #ef4444;
+}
+
+.wishlist-actions {
+    display: flex;
+    gap: 1rem;
+}
+
+/* Empty Wishlist */
+.empty-wishlist {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.empty-wishlist-icon {
+    font-size: 5rem;
+    margin-bottom: 1rem;
+    opacity: 0.7;
+}
+
+.empty-wishlist h2 {
+    color: #1f2937;
+    margin-bottom: 0.5rem;
+}
+
+.empty-wishlist p {
+    color: #6b7280;
+    margin-bottom: 2rem;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Wishlist Items */
+.wishlist-items {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 2rem;
+}
+
+.wishlist-item {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.wishlist-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.wishlist-item-header {
+    position: relative;
+    padding: 1.5rem;
+    background: linear-gradient(135deg, #f8fafc 0%, #e5e7eb 100%);
+}
+
+.remove-wishlist {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: white;
+    border: none;
+    color: #ef4444;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: all 0.2s;
+}
+
+.remove-wishlist:hover {
+    background: #fef2f2;
+    transform: scale(1.1);
+}
+
+.product-preview {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.product-icon {
+    font-size: 3rem;
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.product-info h3 {
+    color: #1f2937;
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+}
+
+.product-category {
+    color: #6b7280;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+
+.product-added-date {
+    color: #9ca3af;
+    font-size: 0.8rem;
+}
+
+.price-comparison {
+    padding: 1.5rem;
+}
+
+.price-comparison h4 {
+    color: #1f2937;
+    margin-bottom: 1rem;
+    font-size: 1rem;
+}
+
+.platform-prices {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.platform-price {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem;
+    background: #f8fafc;
+    border-radius: 8px;
+    border-left: 3px solid transparent;
+}
+
+.platform-price.cheapest {
+    border-left-color: #10b981;
+    background: #f0fdf4;
+}
+
+.platform-price.fastest {
+    border-left-color: #3b82f6;
+    background: #eff6ff;
+}
+
+.platform-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.platform-logo {
+    font-size: 1.2rem;
+}
+
+.platform-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.platform-name {
+    font-weight: 500;
+    color: #1f2937;
+    font-size: 0.9rem;
+}
+
+.platform-meta {
+    font-size: 0.8rem;
+    color: #6b7280;
+}
+
+.platform-pricing {
+    text-align: right;
+}
+
+.price {
+    font-weight: 700;
+    color: #059669;
+    font-size: 1rem;
+}
+
+.original-price {
+    font-size: 0.8rem;
+    color: #9ca3af;
+    text-decoration: line-through;
+}
+
+.discount {
+    font-size: 0.7rem;
+    color: #dc2626;
+    font-weight: 500;
+}
+
+.unavailable {
+    color: #9ca3af;
+    font-style: italic;
+    font-size: 0.9rem;
+}
+
+.price-badges {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.price-badge {
+    padding: 0.2rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: 500;
+}
+
+.price-badge.cheapest {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.price-badge.fastest {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+.wishlist-actions-item {
+    padding: 1rem 1.5rem;
+    background: #f9fafb;
+    display: flex;
+    gap: 1rem;
+}
+
+.wishlist-actions-item .btn {
+    flex: 1;
+    text-align: center;
+}
+
+.btn-outline {
+    background: transparent;
+    border: 1px solid #d1d5db;
+    color: #374151;
+}
+
+.btn-outline:hover {
+    background: #f3f4f6;
+    border-color: #9ca3af;
+}
+
+/* Price Alert Modal */
+.alert-form {
+    padding: 1.5rem;
+}
+
+.product-preview-modal {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: #f8fafc;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+}
+
+.product-preview-modal .product-icon {
+    font-size: 2rem;
+    width: 50px;
+    height: 50px;
+}
+
+.product-preview-modal .product-info h3 {
+    margin: 0;
+    font-size: 1rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: #374151;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 1rem;
+    box-sizing: border-box;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: #2563eb;
+}
+
+.form-group small {
+    color: #6b7280;
+    font-size: 0.8rem;
+    margin-top: 0.25rem;
+    display: block;
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    padding-top: 1rem;
+    border-top: 1px solid #e5e7eb;
+}
+
+/* Wishlist Statistics */
+.wishlist-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #2563eb;
+    margin-bottom: 0.5rem;
+}
+
+.stat-label {
+    color: #6b7280;
+    font-size: 0.9rem;
+}
+
+/* Loading States */
+.wishlist-loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 4rem;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .wishlist-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    
+    .wishlist-header h1 {
+        font-size: 2rem;
+    }
+    
+    .wishlist-actions {
+        width: 100%;
+        justify-content: space-between;
+    }
+    
+    .wishlist-items {
+        grid-template-columns: 1fr;
+    }
+    
+    .platform-prices {
+        gap: 0.5rem;
+    }
+    
+    .platform-price {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    
+    .platform-pricing {
+        text-align: left;
+        width: 100%;
+    }
+    
+    .wishlist-actions-item {
+        flex-direction: column;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+    }
+}
+
+/* Animation for adding/removing items */
+.wishlist-item-enter {
+    animation: slideInUp 0.3s ease-out;
+}
+
+.wishlist-item-exit {
+    animation: slideOutDown 0.3s ease-in;
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideOutDown {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+}

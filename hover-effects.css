@@ -1,0 +1,113 @@
+/* Basic Hover Effects System */
+
+:root {
+    --hover-transition: all 0.2s ease-in-out;
+    --accent-blue: #2563eb;
+    --accent-blue-dark: #1d4ed8;
+    --bg-hover: rgba(37, 99, 235, 0.1);
+}
+
+/* --- Global Hover --- */
+.hover-basic:hover {
+    opacity: 0.8;
+}
+
+/* --- Buttons --- */
+.btn-primary,
+.btn-secondary,
+.action-btn,
+.btn,
+.btn-primary-modern,
+.icon-btn,
+.view-btn {
+    transition: var(--hover-transition) !important;
+}
+
+.btn-primary:hover,
+.btn-primary-modern:hover {
+    background: var(--accent-blue-dark) !important;
+}
+
+.btn-secondary:hover {
+    background: #374151 !important;
+}
+
+.action-btn:hover,
+.icon-btn:hover,
+.view-btn:hover {
+    background: var(--bg-hover) !important;
+    color: var(--accent-blue) !important;
+}
+
+/* --- Navigation Links --- */
+.nav-link,
+.admin-nav-link,
+.menu-item {
+    transition: var(--hover-transition) !important;
+}
+
+.nav-link:hover,
+.admin-nav-link:hover,
+.menu-item:hover {
+    color: var(--accent-blue) !important;
+}
+
+/* --- Cards --- */
+.product-card,
+.card-stat,
+.category-card,
+.stat-card,
+.category-admin-card,
+.card-panel,
+.stat-card-modern,
+.platform-admin-card,
+.widget {
+    transition: var(--hover-transition) !important;
+}
+
+.product-card:hover,
+.card-stat:hover,
+.stat-card:hover,
+.category-admin-card:hover,
+.card-panel:hover,
+.stat-card-modern:hover,
+.category-card:hover,
+.platform-admin-card:hover,
+.widget:hover {
+    border-color: var(--accent-blue) !important;
+    background: rgba(255, 255, 255, 0.03) !important;
+}
+
+/* --- Table Rows --- */
+tr {
+    transition: var(--hover-transition);
+}
+
+tr:hover {
+    background: rgba(37, 99, 235, 0.05) !important;
+}
+
+/* --- Input Focus --- */
+.form-input:focus,
+.main-search:focus-within {
+    border-color: var(--accent-blue) !important;
+    outline: none;
+}
+
+/* --- Modal Close --- */
+.close:hover {
+    color: #ef4444 !important;
+    opacity: 0.7;
+}
+
+/* --- Reset Image Zoom --- */
+.product-image img,
+.category-card img,
+.category-image img {
+    transition: none !important;
+}
+
+.product-card:hover .product-image img,
+.category-card:hover img {
+    transform: none !important;
+}

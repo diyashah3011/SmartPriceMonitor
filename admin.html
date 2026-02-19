@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<!-- Admin Dashboard - Platform Management -->
+<html lang="en">
+
+<head>
+    <script>
+        // Immediate auth check
+        (function () {
+            const user = localStorage.getItem('currentUser');
+            let isAdmin = false;
+            try {
+                if (user) {
+                    const parsed = JSON.parse(user);
+                    isAdmin = parsed && parsed.role === 'admin';
+                }
+            } catch (e) { }
+
+            if (!isAdmin) {
+                window.location.replace('admin_login.html');
+            }
+        })();
+    </script>
+    <style>
+        body {
+            display: none;
+        }
+    </style>
+    <script>
+        // Show body if auth passes
+        document.addEventListener('DOMContentLoaded', () => {
+            document.body.style.display = 'flex'; // Restore flex for admin layout
+        });
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Smart Price Monitor</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/app-modern.css">
+    <link rel="stylesheet" href="css/hover-effects.css">
+    <style>
+        /* Global Reset for Admin */
+        * {
+            box-sizing: border-box;
+        }
+
+        /* Admin Specific Overrides */
+        :root {
+            --bg-admin-sidebar: #0F1621;
+            --bg-admin-content: #0B0E14;
+            --sidebar-width: 280px;
+        }
+
+        body {
+            display: flex;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            background: #0f172a;
+            /* Solid Slate Blue background for Admin */
+            color: #f8fafc;
+        }
+
+        .admin-sidebar {
+            width: var(--sidebar-width);
+            background: var(--bg-admin-sidebar);
+            border-right: 1px solid var(--border-color);
+            padding: 2rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            z-index: 100;
+            overflow-y: auto;
+        }
+
+        .admin-nav-link i {
+            width: 24px;
+            text-align: center;
+        }
+
+        .admin-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 2.5rem 3rem;
+            min-width: 0;
+            /* Important for flex children and overflow */
+        }
+
+        .admin-nav-link {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            color: var(--text-gray);
+            text-decoration: none;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .admin-nav-link:hover,
+        .admin-nav-link.active {
+            background: rgba(37, 99, 235, 0.1);
+            color: var(--accent-blue);
+        }
+
+        .stat-card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            padding: 1.5rem;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--accent-blue);
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            background: rgba(37, 99, 235, 0.1);
+            color: var(--accent-blue);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        /* Table Styles */
+        .admin-table-container {
+            background: var(--bg-card);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            margin-top: 2rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        th,
+        td {
+            text-align: left;
+            padding: 1.25rem 1rem;
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: middle;
+        }
+
+        th {
+            background: #1F2937;
+            color: var(--text-gray);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.7rem;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover {
+            background: rgba(37, 99, 235, 0.03);
+        }
+
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .status-active {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+        }
+
+        .status-inactive {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+
+        .action-btn {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-gray);
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            cursor: pointer;
+            width: auto;
+            padding: 0.4rem 0.8rem;
+        }
+
+        .action-btn:hover {
+            border-color: var(--text-white);
+            color: white;
+        }
+
+        .btn-edit {
+            color: var(--accent-blue);
+            border-color: rgba(37, 99, 235, 0.3);
+        }
+
+        .btn-delete {
+            color: #ef4444;
+            border-color: rgba(239, 68, 68, 0.3);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: var(--bg-card);
+            padding: 2rem;
+            border-radius: 12px;
+            width: 550px;
+            max-width: 95%;
+            border: 1px solid var(--border-color);
+            max-height: 85vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .close {
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-gray);
+        }
+
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-gray);
+            font-size: 0.9rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.8rem;
+            background: #0B0E14;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: white;
+            font-family: inherit;
+        }
+
+        /* Modern Switch Styles */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 20px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #374151;
+            transition: .3s;
+            border-radius: 20px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 14px;
+            width: 14px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+        }
+
+        input:checked+.slider {
+            background-color: var(--accent-blue);
+        }
+
+        input:checked+.slider:before {
+            transform: translateX(20px);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Sidebar -->
+    <div class="admin-sidebar" style="background: #0B0E14; border-right: 1px solid var(--border-color);">
+        <div class="nav-brand"
+            style="margin-bottom: 2.5rem; padding: 1.5rem; display: flex; align-items: center; gap: 0.8rem;">
+            <div
+                style="width: 32px; height: 32px; background: var(--accent-blue); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white;">
+                <i class="fas fa-shield-alt"></i>
+            </div>
+            <span style="font-size: 1.25rem; font-weight: 800; letter-spacing: -0.5px;">Admin<span
+                    style="color: var(--accent-blue);">Panel</span></span>
+        </div>
+
+        <div class="user-welcome"
+            style="flex-direction: column; align-items: center; text-align: center; margin-bottom: 2rem;">
+            <div class="user-avatar" onclick="showAdminProfile()"
+                style="position: relative; width: 80px; height: 80px; margin-bottom: 1rem; cursor: pointer; transition: transform 0.2s;"
+                onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                <i class="fas fa-user-shield" style="font-size: 2.5rem;"></i>
+                <button class="upload-btn" onclick="event.stopPropagation(); uploadAdminImage()"
+                    style="position: absolute; bottom: 0; right: 0; border: none; background: #3b82f6; color: white; border-radius: 50%; width: 24px; height: 24px; font-size: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-camera"></i>
+                </button>
+            </div>
+            <div class="user-info">
+                <h3 style="font-size: 1.1rem; margin: 0;">Admin Panel</h3>
+                <p style="font-size: 0.8rem; color: var(--text-gray); margin: 0;">System Overview</p>
+            </div>
+        </div>
+
+        <a href="comparison.html" class="admin-nav-link" target="_blank"
+            style="background: rgba(16, 185, 129, 0.1); color: #10b981; margin-top: 1rem; border: 1px solid rgba(16, 185, 129, 0.2);">
+            <i class="fas fa-external-link-alt"></i>
+            <span>User Platform View</span>
+        </a>
+        <div style="margin: 1.5rem 0; height: 1px; background: #1e293b;"></div>
+
+        <a href="#" class="admin-nav-link" id="nav-dashboard" onclick="switchView('dashboard'); return false;">
+            <i class="fas fa-th-large"></i>
+            <span>Dashboard</span>
+        </a>
+        <a href="#" class="admin-nav-link active" id="nav-inventory" onclick="switchView('inventory'); return false;">
+            <i class="fas fa-box"></i>
+            <span>Inventory</span>
+        </a>
+        <a href="#" class="admin-nav-link" id="nav-categories" onclick="switchView('categories'); return false;">
+            <i class="fas fa-tags"></i>
+            <span>Categories</span>
+        </a>
+        <a href="#" class="admin-nav-link" id="nav-customers" onclick="switchView('customers'); return false;"><i
+                class="fas fa-users"></i> Customers</a>
+
+        <div style="margin-top: auto; padding-top: 1rem; border-top: 1px solid var(--border-color);">
+            <a href="#" class="admin-nav-link" id="nav-settings" onclick="switchView('settings'); return false;">
+                <i class="fas fa-cog"></i> <span>Settings</span>
+            </a>
+            <a href="#" onclick="logoutAdmin(); return false;" class="admin-nav-link" style="color: #ef4444;">
+                <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="admin-content">
+        <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2.5rem;">
+            <div>
+                <h1 id="page-title" onclick="switchView('inventory')"
+                    style="font-size: 2rem; font-weight: 800; margin-bottom: 0.2rem; cursor: pointer; transition: color 0.2s;"
+                    onmouseover="this.style.color='var(--accent-blue)'" onmouseout="this.style.color='white'">Inventory
+                    Management</h1>
+                <p id="page-desc" style="color: var(--text-gray); font-size: 0.95rem;">Monitor and control your product
+                    catalog in real-time.</p>
+            </div>
+            <div id="header-actions" style="display: flex; gap: 1rem; align-items: center;">
+                <button id="add-product-btn" class="btn btn-primary" onclick="openAddModal()"
+                    style="height: 45px; padding: 0 1.5rem; display: inline-flex; align-items: center; gap: 0.5rem;">
+                    <i class="fas fa-plus"></i> Add New Product
+                </button>
+            </div>
+        </header>
+
+        <div id="dashboard-view" style="display: none;">
+            <!-- Simplified Experience -->
+
+
+            <div
+                style="background: var(--bg-card); padding: 2rem; border-radius: 20px; border: 1px solid var(--border-color); position: relative; overflow: hidden;">
+                <div
+                    style="position: absolute; top: 0; right: 0; width: 300px; height: 300px; background: radial-gradient(circle, rgba(37, 99, 235, 0.05) 0%, transparent 70%);">
+                </div>
+                <h3 onclick="switchView('dashboard')"
+                    style="margin-bottom: 2rem; display: flex; align-items: center; gap: 0.8rem; font-size: 1.25rem; cursor: pointer; transition: opacity 0.2s;"
+                    onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">
+                    <i class="fas fa-chart-line" style="color: var(--accent-blue);"></i>
+                    Real-time Activity Stream
+                </h3>
+                <div id="activity-log"
+                    style="display: flex; flex-direction: column; gap: 1.2rem; position: relative; z-index: 1;">
+                    <!-- Activity stream items -->
+                </div>
+            </div>
+        </div>
+
+        <div id="inventory-view" style="display: block;">
+            <!-- Stats Overview -->
+            <div
+                style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-bottom: 2.5rem;">
+                <div class="card-stat" onclick="switchView('inventory')"
+                    style="background: var(--bg-card); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border-color); display: flex; align-items: center; gap: 1.2rem; cursor: pointer; transition: transform 0.2s;">
+                    <div
+                        style="width: 50px; height: 50px; background: rgba(37, 99, 235, 0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--accent-blue); font-size: 1.4rem;">
+                        <i class="fas fa-boxes"></i>
+                    </div>
+                    <div>
+                        <h3
+                            style="color: var(--text-gray); font-size: 0.8rem; margin: 0; text-transform: uppercase; letter-spacing: 1px;">
+                            Total Products</h3>
+                        <div style="font-size: 1.6rem; font-weight: 800;" id="stat-total">0</div>
+                    </div>
+                </div>
+
+                <div class="card-stat" onclick="switchView('customers')"
+                    style="background: var(--bg-card); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border-color); display: flex; align-items: center; gap: 1.2rem; cursor: pointer; transition: transform 0.2s;">
+                    <div
+                        style="width: 50px; height: 50px; background: rgba(139, 92, 246, 0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #8b5cf6; font-size: 1.4rem;">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div>
+                        <h3
+                            style="color: var(--text-gray); font-size: 0.8rem; margin: 0; text-transform: uppercase; letter-spacing: 1px;">
+                            Total Users</h3>
+                        <div style="font-size: 1.6rem; font-weight: 800;" id="stat-users">0</div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="display: block;">
+                <!-- Products Table Section -->
+                <div style="min-width: 0;">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                        <h2 style="font-size: 1.35rem; font-weight: 700;">Active Inventory</h2>
+                    </div>
+                    <div class="admin-table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Product Details</th>
+                                    <th>Category</th>
+                                    <th>Listing Price</th>
+                                    <th>Stock</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="products-table-body">
+                                <!-- Dynamic Rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div> <!-- End inventory-view -->
+
+        <!-- Customers View -->
+        <div id="customers-view" style="display: none;">
+            <div class="admin-table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Role</th>
+                            <th>Email</th>
+                            <th>Details</th>
+                        </tr>
+                    </thead>
+                    <tbody id="customers-table-body">
+                        <!-- Dynamic Rows -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Categories View -->
+        <div id="categories-view" style="display: none;">
+            <div
+                style="background: var(--bg-card); border-radius: 16px; border: 1px solid var(--border-color); padding: 1.5rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                    <h3 style="margin: 0;">Active Categories</h3>
+
+                </div>
+                <div id="categories-manage-list"
+                    style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem;">
+                    <!-- Filled by JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings View - Redesigned -->
+        <div id="settings-view" style="display: none;">
+            <div style="max-width: 900px; margin: 0 auto; display: grid; grid-template-columns: 1fr; gap: 2rem;">
+                <!-- Branding & Localization -->
+                <div
+                    style="background: var(--bg-card); padding: 2.5rem; border-radius: 20px; border: 1px solid var(--border-color); display: flex; flex-direction: column; gap: 1.5rem;">
+                    <h3 style="margin: 0; font-size: 1.25rem; display: flex; align-items: center; gap: 0.6rem;">
+                        <i class="fas fa-paint-brush" style="color: var(--accent-blue);"></i> Portal Customization
+                    </h3>
+                    <div class="form-group">
+                        <label class="form-label">Platform Identity</label>
+                        <input type="text" class="form-input" id="set-platform-name" value="Smart Price Monitor"
+                            placeholder="Platform Name">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Platform Logo</label>
+                        <div style="display: flex; align-items: center; gap: 1rem;">
+                            <div id="logo-preview-container"
+                                style="width: 50px; height: 50px; border: 1px solid var(--border-color); border-radius: 8px; background: #0B0E14; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                                <i class="fas fa-shield-alt" id="logo-icon-placeholder"
+                                    style="color: var(--accent-blue); font-size: 1.5rem;"></i>
+                            </div>
+                            <label for="set-platform-logo-upload" class="btn btn-secondary"
+                                style="cursor: pointer; font-size: 0.9rem; padding: 0.6rem 1rem;">
+                                <i class="fas fa-upload"></i> Upload Logo
+                            </label>
+                            <input type="file" id="set-platform-logo-upload" accept="image/*" style="display: none;"
+                                onchange="handleLogoUpload(event)">
+                            <input type="hidden" id="set-platform-logo-data">
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                        <div class="form-group">
+                            <label class="form-label">Accent Color</label>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <input type="color" class="form-input" id="set-platform-color"
+                                    style="width: 60px; padding: 2px; height: 45px; cursor: pointer; border: none; background: transparent;"
+                                    value="#2563eb"
+                                    onchange="document.getElementById('set-color-hex').value = this.value">
+                                <input type="text" class="form-input" value="#2563eb" id="set-color-hex" readonly>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Regional Currency</label>
+                            <select class="form-input" id="set-currency">
+                                <option value="INR">₹ (INR)</option>
+                                <option value="USD">$ (USD)</option>
+                                <option value="EUR">€ (EUR)</option>
+                                <option value="GBP">£ (GBP)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer Action -->
+                <div
+                    style="display: flex; gap: 1rem; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border-color);">
+                    <button class="btn btn-primary" id="save-settings-btn" onclick="updatePortalSettings()"
+                        style="flex: 2; height: 55px; font-weight: 700; border-radius: 12px; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-check-circle" style="margin-right: 0.5rem;"></i> Save Configuration
+                    </button>
+                    <button class="btn btn-secondary" onclick="resetSettings()"
+                        style="flex: 1; height: 55px; border-radius: 12px; cursor: pointer;">
+                        Reset Defaults
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Edit/Add Modal -->
+        <div id="productModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title" id="modalTitle">Edit Product</h2>
+                    <span class="close" onclick="closeModal()">&times;</span>
+                </div>
+                <form id="productForm">
+                    <input type="hidden" id="edit-id">
+
+                    <div class="form-group">
+                        <label class="form-label">Product Image</label>
+                        <div style="display: flex; gap: 1rem; align-items: center; margin-bottom: 0.5rem;">
+                            <label for="edit-image-input"
+                                style="cursor: pointer; background: #1F2937; padding: 0.8rem 1.2rem; border-radius: 6px; border: 1px dashed var(--border-color); flex: 1; text-align: center; color: var(--text-gray);">
+                                <i class="fas fa-cloud-upload-alt"></i> Upload Image
+                            </label>
+                            <input type="file" id="edit-image-input" accept="image/*" style="display: none;"
+                                onchange="handleImagePreview(event)">
+                            <div id="image-preview"
+                                style="width: 60px; height: 60px; background: #0B0E14; border-radius: 8px; border: 1px solid var(--border-color); display: flex; align-items: center; justify-content: center; font-size: 2rem; overflow: hidden;">
+                                📦
+                            </div>
+                        </div>
+                        <input type="hidden" id="edit-image-data">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Product Name</label>
+                        <input type="text" class="form-input" id="edit-name" required>
+                    </div>
+
+                    <div class="form-group" style="display: flex; gap: 1rem;">
+                        <div style="flex: 1;">
+                            <label class="form-label">Category</label>
+                            <select class="form-input" id="edit-category">
+                                <option value="electronics">Electronics</option>
+                                <option value="fashion">Fashion</option>
+                                <option value="home">Home & Living</option>
+                                <option value="grocery">Groceries</option>
+                                <option value="beauty">Beauty & Care</option>
+                                <option value="automotive">Automotive</option>
+                                <option value="toys">Toys & Games</option>
+                                <option value="fitness">Sports & Fitness</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                        <div style="flex: 1; min-width: 150px;">
+                            <label class="form-label">Amazon MRP (₹)</label>
+                            <input type="number" class="form-input" id="edit-mrp-amazon"
+                                oninput="calculatePlatformDiscount('amazon')" placeholder="e.g. 1000">
+                        </div>
+                        <div style="flex: 1; min-width: 150px;">
+                            <label class="form-label">Amazon Selling Price (₹)</label>
+                            <input type="number" class="form-input" id="edit-price-amazon"
+                                oninput="calculatePlatformDiscount('amazon')" placeholder="e.g. 800">
+                        </div>
+                        <div style="flex: 1; min-width: 150px;">
+                            <label class="form-label">Amazon Stock</label>
+                            <select class="form-input" id="edit-stock-amazon">
+                                <option value="true">In Stock</option>
+                                <option value="false">Out of Stock</option>
+                            </select>
+                        </div>
+                        <div style="flex: 100%;">
+                            <label class="form-label">Amazon Product URL</label>
+                            <input type="url" class="form-input" id="edit-url-amazon"
+                                placeholder="https://www.amazon.in/dp/...">
+                        </div>
+                        <div style="flex: 100%; margin-top: 0.5rem;">
+                            <label class="form-label">Amazon Specific Description</label>
+                            <textarea class="form-input" id="edit-desc-amazon" rows="2"
+                                placeholder="Description for Amazon listing..."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                        <div style="flex: 1; min-width: 150px;">
+                            <label class="form-label">Flipkart MRP (₹)</label>
+                            <input type="number" class="form-input" id="edit-mrp-flipkart"
+                                oninput="calculatePlatformDiscount('flipkart')" placeholder="e.g. 1000">
+                        </div>
+                        <div style="flex: 1; min-width: 150px;">
+                            <label class="form-label">Flipkart Selling Price (₹)</label>
+                            <input type="number" class="form-input" id="edit-price-flipkart"
+                                oninput="calculatePlatformDiscount('flipkart')" placeholder="e.g. 850">
+                        </div>
+                        <div style="flex: 1; min-width: 150px;">
+                            <label class="form-label">Flipkart Stock</label>
+                            <select class="form-input" id="edit-stock-flipkart">
+                                <option value="true">In Stock</option>
+                                <option value="false">Out of Stock</option>
+                            </select>
+                        </div>
+                        <div style="flex: 100%;">
+                            <label class="form-label">Flipkart Product URL</label>
+                            <input type="url" class="form-input" id="edit-url-flipkart"
+                                placeholder="https://www.flipkart.com/...">
+                        </div>
+                        <div style="flex: 100%; margin-top: 0.5rem;">
+                            <label class="form-label">Flipkart Specific Description</label>
+                            <textarea class="form-input" id="edit-desc-flipkart" rows="2"
+                                placeholder="Description for Flipkart listing..."></textarea>
+                        </div>
+                    </div>
+
+
+
+                    <div style="text-align: right; margin-top: 2rem;">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                        <button type="button" class="btn btn-primary" style="margin-left: 1rem;"
+                            onclick="saveProductChanges()">Save
+                            Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Admin Profile Modal -->
+        <div id="adminProfileModal" class="modal">
+            <div class="modal-content" style="max-width: 450px; text-align: center; border-radius: 24px;">
+                <div class="modal-header" style="border: none; margin-bottom: 0;">
+                    <span class="close" onclick="closeAdminProfile()"
+                        style="position: absolute; right: 2rem; top: 2rem;">&times;</span>
+                </div>
+                <div style="padding: 2rem;">
+                    <div class="user-avatar"
+                        style="width: 100px; height: 100px; margin: 0 auto 1.5rem; background: var(--accent-blue); display: flex; align-items: center; justify-content: center; border-radius: 50%; border: 4px solid rgba(255,255,255,0.1);">
+                        <i class="fas fa-user-shield" style="font-size: 3rem; color: white;"></i>
+                    </div>
+                    <h2 style="font-size: 1.8rem; margin-bottom: 0.5rem;">System Admin</h2>
+                    <p
+                        style="color: var(--accent-blue); font-weight: 600; font-size: 0.9rem; letter-spacing: 1px; text-transform: uppercase;">
+                        Superuser Authorization</p>
+
+                    <div
+                        style="margin: 2rem 0; padding: 1.5rem; background: rgba(255,255,255,0.03); border-radius: 16px; border: 1px solid var(--border-color); text-align: left;">
+
+                        <div style="display: flex; flex-direction: column; gap: 1rem;">
+                            <button class="btn btn-secondary" onclick="uploadAdminImage()"
+                                style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.8rem;">
+                                <i class="fas fa-camera"></i> Change Profile Picture
+                            </button>
+
+                            <button class="btn btn-secondary" onclick="togglePasswordChange()"
+                                style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.8rem;">
+                                <i class="fas fa-key"></i> Change Password
+                            </button>
+                        </div>
+
+                        <div id="password-change-section"
+                            style="display: none; margin-top: 1.5rem; border-top: 1px solid var(--border-color); padding-top: 1.5rem;">
+                            <div class="form-group">
+                                <label class="form-label">New Password</label>
+                                <input type="password" id="new-admin-password" class="form-input"
+                                    placeholder="Enter new password">
+                                <p
+                                    style="font-size: 0.7rem; color: var(--text-gray); margin-top: 0.4rem; opacity: 0.7;">
+                                    Use 8+ chars (A-Z, a-z, 0-9, and @$!%*?&)
+                                </p>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Confirm Password</label>
+                                <input type="password" id="confirm-admin-password" class="form-input"
+                                    placeholder="Confirm new password">
+                            </div>
+                            <button class="btn btn-primary" onclick="saveNewAdminPassword()"
+                                style="width: 100%; margin-top: 0.5rem;">
+                                Update Password
+                            </button>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 1rem;">
+                        <button class="btn btn-primary" style="flex: 1;" onclick="closeAdminProfile()">Done</button>
+                        <button class="btn btn-secondary" style="flex: 1; border-color: #ef4444; color: #ef4444;"
+                            onclick="logoutAdmin()">Logout</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script src="js/data.js"></script>
+        <script src="js/admin.js"></script>
+        <script>
+            // Ensure scripts are loaded
+            console.log('Admin scripts loaded');
+        </script>
+</body>
+
+</html>

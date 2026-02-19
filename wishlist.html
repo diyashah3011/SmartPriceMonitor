@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Wishlist - SmartPrice Monitor</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/app-modern.css">
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛒</text></svg>">
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="nav-left">
+            <a href="index.html" class="nav-brand">
+                <div class="brand-logo-container">
+                    <img src="https://ui-avatars.com/api/?name=SP&background=2563eb&color=fff" alt="Logo"
+                        class="brand-img">
+                </div>
+                <span>Smart Price</span>
+            </a>
+        </div>
+
+
+        <div class="nav-right">
+            <div class="nav-links">
+                <!-- Navigation highlighting current page -->
+                <a href="wishlist.html" class="nav-link active">Wishlist</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-container">
+        <div class="page-header">
+            <div class="header-top">
+                <div class="header-title">
+                    <h1>Smart Wishlist</h1>
+                    <p id="wishlist-subtitle">Loading your wishlist...</p>
+                </div>
+                <div class="header-actions">
+                    <button id="sortBtn" class="btn btn-secondary"><i class="fas fa-sort-amount-down"></i> Sort</button>
+                    <button id="addItemBtn" class="btn btn-primary" onclick="window.location.href='categories.html'"><i
+                            class="fas fa-plus"></i> Add New Item</button>
+                </div>
+            </div>
+
+            <!-- Filter by category or status -->
+            <div class="tabs-container">
+                <button id="tab-all" class="content-tab active" onclick="filterWishlist('all')">All Items <span
+                        id="badge-all" class="badge">0</span></button>
+
+            </div>
+        </div>
+
+        <!-- Main wishlist items grid -->
+        <div id="wishlist-grid-container" class="items-grid">
+            <!-- Dynamic Content Loading... -->
+        </div>
+
+        <div class="pagination">
+            <!-- Pagination if needed -->
+        </div>
+    </div>
+
+    <footer class="modern-footer">
+        <div class="footer-grid" style="display: flex; justify-content: center; text-align: center;">
+            <div class="footer-brand">
+                <div class="brand-logo" style="justify-content: center; margin-bottom: 1rem;">
+                    <i class="fas fa-chart-line"></i>
+                    <span>SmartPrice</span>
+                </div>
+                <p style="max-width: 600px; margin: 0 auto;">Advanced price tracking and real-time alerts to help you
+                    save money on every purchase across all major retailers.</p>
+            </div>
+        </div>
+
+
+    </footer>
+
+    <!-- UI and data logic scripts -->
+    <script src="js/data.js"></script>
+    <script src="js/app-modern.js"></script>
+</body>
+
+</html>

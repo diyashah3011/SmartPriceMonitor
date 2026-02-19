@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<!-- 
+    Administrative Authentication Portal
+    Entry point for administrators with role-based access control.
+-->
+<html lang="en">
+
+<head>
+    <script>
+        // If already logged in as admin, redirect immediately
+        const existingAdmin = localStorage.getItem('currentUser');
+        if (existingAdmin) {
+            try {
+                const user = JSON.parse(existingAdmin);
+                if (user.role === 'admin') {
+                    window.location.replace('admin.html');
+                }
+            } catch (e) { }
+        }
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - SmartPrice Monitor</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/landing-modern.css">
+    <link rel="stylesheet" href="css/hover-effects.css">
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>">
+    <style>
+        .full-center {
+            min-height: 100vh;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: radial-gradient(circle at center, #1a2333 0%, #050505 100%);
+            padding: 2rem;
+            box-sizing: border-box;
+        }
+
+        .admin-login-card {
+            background: rgba(31, 41, 55, 0.5);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 3rem;
+            border-radius: 24px;
+            width: 100%;
+            max-width: 450px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .admin-header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .admin-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--accent-blue);
+            color: white;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin: 0 auto 1.5rem;
+            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.3);
+        }
+
+        .admin-title {
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 0.5rem;
+        }
+
+        .admin-subtitle {
+            color: var(--text-gray);
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="full-center">
+        <div class="admin-login-card">
+            <div class="admin-header">
+                <div class="admin-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h1 class="admin-title">Admin Portal</h1>
+                <p class="admin-subtitle">Secure access to SmartPrice management systems.</p>
+            </div>
+
+            <form id="adminLoginForm" onsubmit="handleAdminLoginModern(event)">
+                <div class="form-group">
+                    <label for="adminUser">Administrator Username</label>
+                    <div style="position: relative;">
+                        <i class="fas fa-user"
+                            style="position: absolute; left: 15px; top: 18px; color: var(--text-gray);"></i>
+                        <input type="text" id="adminUser" placeholder="Enter username" required
+                            style="padding-left: 3rem;">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="adminPass">Security Password</label>
+                    <div style="position: relative;">
+                        <i class="fas fa-lock"
+                            style="position: absolute; left: 15px; top: 18px; color: var(--text-gray);"></i>
+                        <input type="password" id="adminPass" placeholder="Enter password" required
+                            style="padding-left: 3rem;">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-primary" style="margin-top: 1rem;">Authorize Access</button>
+            </form>
+
+            <div style="margin-top: 2rem; text-align: center;">
+                <a href="index.html" style="color: var(--text-gray); text-decoration: none; font-size: 0.9rem;">
+                    <i class="fas fa-arrow-left" style="margin-right: 0.5rem;"></i> Back to Store
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load data.js FIRST so users array is available -->
+    <script src="js/data.js"></script>
+
+    <script>
+        function handleAdminLoginModern(e) {
+            e.preventDefault();
+            const user = document.getElementById('adminUser').value;
+            const pass = document.getElementById('adminPass').value;
+
+            console.log('Login attempt:', user); // Debug
+            console.log('Users array:', users); // Debug
+
+            // Strictly check against the required credentials
+            const adminUser = users.find(u =>
+                u.username === user &&
+                u.password === pass &&
+                u.role === 'admin'
+            );
+
+            console.log('Found admin:', adminUser); // Debug
+
+            if (adminUser) {
+                // Store admin session
+                localStorage.setItem('currentUser', JSON.stringify(adminUser));
+                alert('Login successful! Redirecting to admin dashboard...');
+                window.location.href = 'admin.html';
+            } else {
+                alert("Access Denied: Invalid Credentials.\n\nPlease use the specified administrator username and security password.");
+            }
+        }
+    </script>
+</body>
+
+</html>

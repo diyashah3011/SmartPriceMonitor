@@ -1,0 +1,1099 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script>
+        // Check authentication state before rendering
+        const savedUser = localStorage.getItem('currentUser');
+        if (!savedUser) {
+            window.location.replace('login.html');
+        }
+    </script>
+    <style>
+        body {
+            display: none;
+        }
+    </style>
+    <script>
+        // Show page content after authentication is confirmed
+        if (savedUser) {
+            document.addEventListener('DOMContentLoaded', () => {
+                document.body.style.display = 'flex';
+            });
+        }
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - SmartPrice Monitor</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/app-modern.css">
+    <link rel="stylesheet" href="css/hover-effects.css">
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛒</text></svg>">
+    <style>
+        /* Modern Dashboard Layout */
+        :root {
+            --sidebar-width: 260px;
+            --header-height: 70px;
+            --bg-sidebar: #0F1621;
+            --bg-content: #0B0E14;
+        }
+
+        body {
+            background: #0b0f17;
+            margin: 0;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .app-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+            position: relative;
+            background: radial-gradient(circle at top right, #1a2230, #0b0f17);
+            overflow: hidden;
+        }
+
+        .bg-blob {
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            filter: blur(100px);
+            z-index: 0;
+            opacity: 0.08;
+            pointer-events: none;
+        }
+
+        .blob-1 {
+            top: -100px;
+            right: -100px;
+            background: var(--accent-blue);
+            animation: pulse-blob 15s infinite;
+        }
+
+        .blob-2 {
+            bottom: -100px;
+            left: -100px;
+            background: var(--accent-green);
+            animation: pulse-blob 18s infinite reverse;
+        }
+
+        @keyframes pulse-blob {
+
+            0%,
+            100% {
+                transform: scale(1) translate(0, 0);
+            }
+
+            50% {
+                transform: scale(1.2) translate(30px, -30px);
+            }
+        }
+
+        .card-panel,
+        .stat-card-modern,
+        .order-item,
+        .wishlist-item {
+            background: rgba(21, 28, 37, 0.4) !important;
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05) !important;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            position: relative;
+            z-index: 1;
+        }
+
+        .card-panel:hover,
+        .stat-card-modern:hover {
+            border-color: rgba(37, 99, 235, 0.3) !important;
+            background: rgba(21, 28, 37, 0.6) !important;
+        }
+
+        /* Improved Scroll Area */
+        .content-scroll-area {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 2rem;
+            scroll-behavior: smooth;
+        }
+
+        /* Hide scrollbar for Chrome/Safari/Webkit if desired, but here we want it visible */
+        .content-scroll-area::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .content-scroll-area::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .content-scroll-area::-webkit-scrollbar-thumb {
+            background: rgba(37, 99, 235, 0.3);
+            border-radius: 10px;
+        }
+
+        .content-scroll-area::-webkit-scrollbar-thumb:hover {
+            background: rgba(37, 99, 235, 0.5);
+        }
+
+        /* Sidebar */
+        .app-sidebar {
+            width: var(--sidebar-width);
+            background: var(--bg-sidebar);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            padding: 1.5rem;
+            flex-shrink: 0;
+            z-index: 50;
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: white;
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 2.5rem;
+            text-decoration: none;
+        }
+
+        .sidebar-brand i {
+            color: var(--accent-blue);
+        }
+
+        .sidebar-user-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            padding: 1rem;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .sidebar-user-card:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: #374151;
+        }
+
+        .user-avatar-small {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            overflow: hidden;
+            flex-shrink: 0;
+            border: 2px solid var(--border-color);
+        }
+
+        .user-info-small h4 {
+            margin: 0;
+            font-size: 0.9rem;
+            color: white;
+            font-weight: 600;
+        }
+
+        .user-info-small p {
+            margin: 0;
+            font-size: 0.75rem;
+            color: var(--text-gray);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 140px;
+        }
+
+        .nav-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            flex: 1;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 0.875rem;
+            padding: 0.75rem 1rem;
+            color: var(--text-gray);
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.2s;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .nav-item:hover,
+        .nav-item.active {
+            background: rgba(37, 99, 235, 0.1);
+            color: var(--accent-blue);
+        }
+
+        .nav-item i {
+            width: 20px;
+            text-align: center;
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+            border-top: 1px solid var(--border-color);
+            padding-top: 1.5rem;
+        }
+
+        /* Main Content */
+        .app-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .content-scroll-area {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .view-section {
+            width: 100%;
+            flex-shrink: 0;
+        }
+
+        .top-header {
+            height: var(--header-height);
+            border-bottom: 1px solid var(--border-color);
+            padding: 0 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(11, 14, 20, 0.8);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 40;
+        }
+
+        .page-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .control-btn {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-gray);
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .control-btn:hover {
+            border-color: var(--accent-blue);
+            color: var(--accent-blue);
+        }
+
+
+
+        /* Views */
+        .view-section {
+            display: none;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .view-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Dashboard Grid Overrides */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card-modern {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .stat-val {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.2rem;
+            color: white;
+        }
+
+        .stat-lab {
+            font-size: 0.85rem;
+            color: var(--text-gray);
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+        }
+
+        .card-panel {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .dashboard-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar-user-card {
+                display: none;
+            }
+
+            /* Simplify on tablet */
+        }
+
+        .mobile-menu-btn {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            body {
+                flex-direction: column;
+                height: auto;
+                overflow: auto;
+            }
+
+            .app-sidebar {
+                width: 100%;
+                height: auto;
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-between;
+                padding: 1rem;
+                position: sticky;
+                top: 0;
+            }
+
+            .nav-menu {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background: var(--bg-sidebar);
+                padding: 1rem;
+            }
+
+            .nav-menu.mobile-open {
+                display: flex;
+            }
+
+            .sidebar-brand {
+                margin: 0;
+            }
+
+            .app-main {
+                overflow: visible;
+            }
+
+            .content-scroll-area {
+                padding: 1rem;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Component Styles */
+        .stat-icon-circle {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .stat-icon-circle.blue {
+            background: rgba(37, 99, 235, 0.2);
+            color: var(--accent-blue);
+        }
+
+        .stat-icon-circle.green {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--accent-green);
+        }
+
+        .stat-icon-circle.red {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: var(--text-gray);
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+            display: block;
+        }
+
+        /* Order Items */
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.25rem;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            transition: all 0.2s;
+        }
+
+        .order-item:hover {
+            border-color: var(--accent-blue);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .order-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .order-icon {
+            font-size: 1.5rem;
+            width: 50px;
+            height: 50px;
+            background: var(--bg-card);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .order-details h4 {
+            margin: 0 0 0.25rem 0;
+            color: white;
+            font-size: 1rem;
+        }
+
+        .order-meta {
+            font-size: 0.85rem;
+            color: var(--text-gray);
+        }
+
+        .order-status {
+            text-align: right;
+        }
+
+        .order-price {
+            font-weight: 700;
+            color: white;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            display: inline-block;
+        }
+
+        .status-badge.delivered {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+        }
+
+        .status-badge.processing {
+            background: rgba(245, 158, 11, 0.2);
+            color: #f59e0b;
+        }
+
+        .status-badge.shipped {
+            background: rgba(37, 99, 235, 0.2);
+            color: #3b82f6;
+        }
+
+        .status-badge.cancelled {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+
+        .status-active {
+            background: rgba(37, 99, 235, 0.2);
+            color: #3b82f6;
+        }
+
+        /* Price Alerts */
+        .price-alert {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: rgba(37, 99, 235, 0.05);
+            border: 1px solid rgba(37, 99, 235, 0.2);
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .alert-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .alert-icon {
+            color: var(--accent-blue);
+            font-size: 1.2rem;
+        }
+
+        .alert-details h4 {
+            margin: 0 0 0.25rem 0;
+            color: white;
+            font-size: 0.95rem;
+        }
+
+        .alert-target {
+            font-size: 0.8rem;
+            color: var(--text-gray);
+        }
+
+        .alert-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        /* Cart Summary */
+        .cart-item-summary {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .cart-item-summary:last-child {
+            border-bottom: none;
+        }
+
+        .cart-item-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .cart-item-icon {
+            font-size: 1.2rem;
+        }
+
+        .cart-item-details h4 {
+            margin: 0;
+            color: white;
+            font-size: 0.9rem;
+        }
+
+        .cart-item-platform {
+            font-size: 0.75rem;
+            color: var(--text-gray);
+        }
+
+        .cart-item-price {
+            font-weight: 600;
+            color: var(--accent-green);
+            font-size: 0.9rem;
+        }
+
+        /* Wishlist Grid */
+        .wishlist-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .wishlist-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            min-height: 320px;
+        }
+
+        .wishlist-item:hover {
+            border-color: var(--accent-blue);
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.03);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .wishlist-item-icon {
+            width: 100%;
+            height: 180px;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 12px;
+            padding: 1rem;
+            font-size: 3rem;
+        }
+
+        .wishlist-item-icon img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.2));
+        }
+
+        .wishlist-item-name {
+            font-weight: 700;
+            color: white;
+            margin-bottom: 0.75rem;
+            font-size: 1.1rem;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            height: 3.1rem;
+            /* Height for 2 lines */
+        }
+
+        .wishlist-item-price {
+            color: var(--accent-green);
+            font-weight: 800;
+            font-size: 1.25rem;
+            margin-top: auto;
+            background: rgba(16, 185, 129, 0.1);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            width: fit-content;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Sidebar -->
+    <aside class="app-sidebar">
+        <a href="index.html" class="sidebar-brand" style="position: relative;">
+            <div class="brand-logo-container" onclick="event.preventDefault(); uploadLogo();"
+                style="cursor: pointer; position: relative;">
+                <img id="brandLogo" src="https://ui-avatars.com/api/?name=SP&background=2563eb&color=fff&bold=true"
+                    alt="Logo" class="brand-img">
+                <div class="logo-overlay"
+                    style="position: absolute; inset: 0; background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; opacity: 0; transition: 0.3s; border-radius: 8px;">
+                    <i class="fas fa-camera" style="font-size: 0.8rem; color: white;"></i>
+                </div>
+            </div>
+            <span>Smart Price</span>
+            <style>
+                .brand-logo-container:hover .logo-overlay {
+                    opacity: 1;
+                }
+            </style>
+        </a>
+
+        <!-- User Mini Profile in Sidebar -->
+        <div class="sidebar-user-card" onclick="switchView('settings')">
+            <div class="user-avatar-small user-avatar">
+                <!-- Populated by JS -->
+            </div>
+            <div class="user-info-small">
+                <h4 id="sidebarUserName" style="color: white; font-weight: 700;">Smart User</h4>
+                <p id="sidebarUserEmail" style="color: var(--text-gray); font-size: 0.75rem;">Voter ID: SMART-7921</p>
+            </div>
+        </div>
+
+        <!-- Main navigation and view management -->
+        <nav class="nav-menu">
+            <a href="#" class="nav-item active" onclick="switchView('overview'); return false;" id="nav-overview">
+                <i class="fas fa-th-large"></i> Dashboard
+            </a>
+            <a href="#" class="nav-item" onclick="switchView('categories'); return false;" id="nav-categories">
+                <i class="fas fa-layer-group"></i> Categories
+            </a>
+            <a href="#" class="nav-item" onclick="switchView('wishlist'); return false;" id="nav-wishlist">
+                <i class="fas fa-heart"></i> My Lists
+            </a>
+            <a href="#" class="nav-item" onclick="switchView('settings'); return false;" id="nav-settings">
+                <i class="fas fa-cog"></i> Settings
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <a href="#" class="nav-item" id="loginLink">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="app-main">
+        <div class="bg-blob blob-1"></div>
+        <div class="bg-blob blob-2"></div>
+        <header class="top-header">
+            <button class="control-btn mobile-menu-btn" onclick="toggleMobileMenu()">
+                <i class="fas fa-bars"></i>
+            </button>
+            <h2 class="page-title" id="page-title">Dashboard Overview</h2>
+            <div class="header-controls">
+
+            </div>
+        </header>
+
+        <div class="content-scroll-area">
+
+            <!-- OVERVIEW VIEW -->
+            <div id="view-overview" class="view-section active">
+
+                <!-- PROMINENT BRAND HEADER (The "Upper Details") -->
+                <div class="card-panel"
+                    style="background: linear-gradient(135deg, rgba(37, 99, 235, 0.1), rgba(15, 22, 33, 0.95)); border: 1px solid var(--accent-blue); padding: 2.5rem; margin-bottom: 2.5rem; backdrop-filter: blur(10px);">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 3rem;">
+                        <div style="flex: 1; min-width: 300px;">
+                            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
+                                <div
+                                    style="width: 45px; height: 45px; background: var(--accent-blue); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; color: white;">
+                                    <i class="fas fa-chart-line"></i>
+                                </div>
+                                <h1
+                                    style="font-size: 2.2rem; font-weight: 800; color: white; margin: 0; letter-spacing: -1px;">
+                                    Smart Price</h1>
+                            </div>
+                            <p style="font-size: 1rem; color: var(--text-gray); line-height: 1.6; margin-bottom: 2rem;">
+                                Advanced price tracking and real-time alerts to help you save money on every purchase
+                                across all major retailers. Join thousands of smart shoppers today.
+                            </p>
+                            <div style="text-align: left;">
+                                <p
+                                    style="text-transform: uppercase; font-size: 0.7rem; letter-spacing: 2.5px; color: var(--accent-blue); font-weight: 700; margin-bottom: 1rem;">
+                                    Quick Links</p>
+                                <div style="display: flex; gap: 2rem; font-weight: 600; font-size: 0.85rem;">
+                                    <a href="about.html"
+                                        style="color: white; text-decoration: none; opacity: 0.8; transition: 0.3s;">About
+                                        Us</a>
+                                    <a href="#" onclick="switchView('categories'); return false;"
+                                        style="color: white; text-decoration: none; opacity: 0.8;">Browse Categories</a>
+                                    <a href="comparison.html"
+                                        style="color: white; text-decoration: none; opacity: 0.8;">Recent Deals</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div
+                            style="flex-shrink: 0; text-align: right; background: rgba(0,0,0,0.3); padding: 1.5rem 2.5rem; border-radius: 16px; border: 1px solid rgba(255,255,255,0.05);">
+                            <h2 id="userName"
+                                style="font-size: 1.3rem; font-weight: 700; color: white; margin-bottom: 0.5rem;">
+                                Welcome, Smart User!</h2>
+                            <p id="userEmail"
+                                style="color: var(--accent-blue); font-weight: 600; font-size: 0.85rem; margin-bottom: 0.5rem;">
+                                Verified ID: smart.user@monitor.com</p>
+                            <p style="color: rgba(156, 163, 175, 0.5); font-size: 0.75rem;">Voter ID: SMART-7921</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dashboard metrics grid -->
+                <div class="dashboard-grid">
+                    <div class="stat-card-modern" onclick="switchView('wishlist')"
+                        style="cursor: pointer; grid-column: span 1; background: rgba(255,255,255,0.02);">
+                        <div class="stat-icon-circle red"><i class="fas fa-heart"></i></div>
+                        <div>
+                            <div class="stat-val" id="wishlistItems">0</div>
+                            <div class="stat-lab">Tracked Items</div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <div id="view-wishlist" class="view-section">
+                <div class="card-panel">
+                    <div class="card-header">
+                        <div class="card-title">My Wishlist</div>
+                        <a href="comparison.html" class="btn btn-primary btn-sm">Browse Products</a>
+                    </div>
+                </div>
+                <div id="wishlistGrid" class="wishlist-grid">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+
+            <!-- CATEGORIES VIEW -->
+            <div id="view-categories" class="view-section">
+                <div class="header-title"
+                    style="margin-bottom: 2.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                    <div>
+                        <h1 style="font-size: 3rem; font-weight: 800; letter-spacing: -1px;">Browse Categories</h1>
+                        <p style="color: var(--text-gray); font-size: 1.1rem;">Find the best price drops across your
+                            favorite retailers</p>
+                    </div>
+                    <div class="view-toggles" style="display: flex; gap: 0.5rem;">
+                        <button id="gridBtn-cat" class="view-btn active"
+                            style="background: var(--accent-blue); border-color: var(--accent-blue); width: 45px; height: 45px; display: flex; align-items: center; justify-content: center;"
+                            title="Grid View"><i class="fas fa-th-large"></i></button>
+                        <button id="listBtn-cat" class="view-btn"
+                            style="width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.05); border: 1px solid var(--border-color);"
+                            title="List View"><i class="fas fa-list"></i></button>
+                    </div>
+                </div>
+
+                <!-- Dashboard Category Search -->
+                <div class="nav-search" style="margin-bottom: 2.5rem; max-width: 100%;">
+                    <input type="text"
+                        style="padding: 1.5rem; font-size: 1.1rem; background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); border-radius: 16px; width: 100%;">
+                </div>
+                <div id="categories-grid" class="items-grid" style="margin-top: 2rem;">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+
+            <!-- SETTINGS VIEW containing consolidated Preferences and Security -->
+            <div id="view-settings" class="view-section">
+                <div style="max-width: 900px; margin: 0 auto;">
+                    <div class="dashboard-grid"
+                        style="grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+                        <div class="card-panel" style="margin:0;">
+                            <div class="card-title" style="font-size: 1rem; margin-bottom: 1.5rem;">Profile Settings
+                            </div>
+                            <div class="user-avatar" id="settingsAvatar"
+                                style="width: 80px; height: 80px; margin-bottom: 1rem; border: 3px solid var(--accent-blue);">
+                            </div>
+                            <button class="btn btn-outline btn-sm" onclick="uploadProfileImage()"
+                                style="width: 100%; margin-bottom: 0.5rem;">Change Photo</button>
+                            <button class="btn btn-secondary btn-sm" onclick="removeProfileImage()"
+                                style="width: 100%; background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2);">Remove
+                                Photo</button>
+
+                        </div>
+                        <div class="card-panel" style="margin:0;">
+                            <div class="card-title" style="font-size: 1rem; margin-bottom: 1.5rem;">Quick
+                                Preferences
+                            </div>
+                            <div class="form-group">
+                                <label style="font-size: 0.8rem; opacity: 0.7;">Marketplace</label>
+                                <select id="preferredPlatform" class="form-control"
+                                    style="background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); color: white; padding: 0.5rem; border-radius: 6px; width: 100%; margin-top: 0.3rem;">
+                                    <option value="amazon">Amazon Global</option>
+                                    <option value="flipkart">Flipkart India</option>
+                                </select>
+                            </div>
+
+                            <!-- Moved Security Settings Here -->
+                            <div
+                                style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border-color);">
+                                <div class="form-group" style="margin-bottom: 1rem;">
+                                    <label style="font-size: 0.8rem; opacity: 0.7;">Current Password</label>
+                                    <input type="password" id="currentPassword" class="form-control"
+                                        placeholder="••••••••"
+                                        style="background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); color: white; padding: 0.8rem; border-radius: 8px; width: 100%;">
+                                </div>
+                                <div class="form-group" style="margin-bottom: 1rem;">
+                                    <label style="font-size: 0.8rem; opacity: 0.7;">New Password</label>
+                                    <input type="password" id="newPassword" class="form-control" placeholder="••••••••"
+                                        style="background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); color: white; padding: 0.8rem; border-radius: 8px; width: 100%;">
+                                    <p
+                                        style="font-size: 0.7rem; color: var(--text-gray); margin-top: 0.4rem; opacity: 0.8;">
+                                        <i class="fas fa-info-circle"
+                                            style="font-size: 0.65rem; margin-right: 2px;"></i>
+                                        Min. 8 chars, A-Z, a-z, 0-9, and special char (@$!%*?&)
+                                    </p>
+                                </div>
+                                <div class="form-group" style="margin-bottom: 1.5rem;">
+                                    <label style="font-size: 0.8rem; opacity: 0.7;">Confirm New Password</label>
+                                    <input type="password" id="confirmNewPassword" class="form-control"
+                                        placeholder="••••••••"
+                                        style="background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); color: white; padding: 0.8rem; border-radius: 8px; width: 100%;">
+                                </div>
+                                <button id="updateSecurityBtn" class="btn btn-primary"
+                                    style="width: 100%; padding: 0.8rem;">Update Security Settings</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-panel">
+                        <div class="card-header">
+                            <div class="card-title">System & Localization</div>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr; gap: 2rem;">
+                            <div>
+                                <h4 style="font-size: 0.9rem; margin-bottom: 1rem;">Display Mode</h4>
+                                <div class="radio-group" style="display: flex; gap: 1rem;">
+                                    <button class="btn btn-outline btn-sm active"
+                                        onclick="toggleDisplayMode(this, 'dark')"
+                                        style="border-radius: 20px;">Dark</button>
+                                    <button class="btn btn-outline btn-sm" onclick="toggleDisplayMode(this, 'light')"
+                                        style="border-radius: 20px; opacity: 0.5;">Light</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="margin-top: 2rem; text-align: right;"><button id="savePreferences"
+                            class="btn btn-primary">Save All Changes</button></div>
+                </div>
+            </div>
+
+            <!-- Hidden Elements for JS Compatibility -->
+            <div id="recentlyViewedGrid" style="display: none;"></div>
+            <div id="cartSummaryPlaceholder" style="display: none;"></div>
+
+            <footer class="modern-footer"
+                style="margin-top: 4rem; padding-top: 3rem; border-top: 1px solid var(--border-color);">
+                <div class="footer-grid" style="display: flex; justify-content: center; text-align: center;">
+                    <div class="footer-brand">
+                        <div class="brand-logo"
+                            style="display: flex; align-items: center; justify-content: center; gap: 0.8rem; font-size: 1.5rem; color: white; margin-bottom: 1.5rem;">
+                            <i class="fas fa-chart-line" style="color: var(--accent-blue);"></i>
+                            <span style="font-weight: 800;">Smart Price</span>
+                        </div>
+                        <p style="color: var(--text-gray); line-height: 1.6; max-width: 600px; margin: 0 auto;">Advanced
+                            price
+                            tracking and real-time alerts to help you save money on every purchase across all major
+                            retailers. Join thousands of smart shoppers today.</p>
+                    </div>
+                </div>
+
+            </footer>
+        </div> <!-- Closing content-scroll-area -->
+    </main>
+
+    <script src="js/data.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/dashboard.js"></script>
+    <script>
+        function toggleDisplayMode(btn, mode) {
+            // Visual toggle for buttons
+            const parent = btn.parentElement;
+            const buttons = parent.querySelectorAll('.btn');
+            buttons.forEach(b => {
+                b.classList.remove('active');
+                b.style.opacity = '0.5';
+            });
+            btn.classList.add('active');
+            btn.style.opacity = '1';
+
+            // Store preference
+            localStorage.setItem('displayMode', mode);
+
+            // Apply mode
+            if (mode === 'light') {
+                document.body.classList.add('light-mode');
+            } else {
+                document.body.classList.remove('light-mode');
+            }
+        }
+
+        // Initialize display mode on load
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedMode = localStorage.getItem('displayMode');
+            if (savedMode === 'light') {
+                document.body.classList.add('light-mode');
+                // Update buttons if they exist
+                const lightBtn = document.querySelector('button[onclick*="light"]');
+                const darkBtn = document.querySelector('button[onclick*="dark"]');
+                if (lightBtn && darkBtn) {
+                    darkBtn.classList.remove('active');
+                    darkBtn.style.opacity = '0.5';
+                    lightBtn.classList.add('active');
+                    lightBtn.style.opacity = '1';
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>

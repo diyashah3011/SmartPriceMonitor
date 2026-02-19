@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script>
+        // Check for existing user session
+        const existingUser = localStorage.getItem('currentUser');
+        // Auto-redirect removed to allow user to switch accounts if needed
+        /*
+        if (existingUser) {
+            try {
+                const user = JSON.parse(existingUser);
+                if (user.role === 'admin') {
+                    window.location.replace('admin.html');
+                } else {
+                    window.location.replace('user-dashboard.html');
+                }
+            } catch(e) {
+                // If JSON parse fails, clear invalid data
+                localStorage.removeItem('currentUser');
+            }
+        }
+        */
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartPrice Monitor - Secure Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/landing-modern.css">
+    <link rel="stylesheet" href="css/hover-effects.css">
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛒</text></svg>">
+</head>
+
+<body class="login-page">
+    <div class="split-screen">
+        <!-- Left Panel with Branding and Visuals -->
+        <div class="left-panel">
+            <div class="logo">
+                <div class="logo-icon"></div>
+                <span>Smart Price Monitor</span>
+            </div>
+
+            <div class="hero-content">
+                <h1>Track price drops in real-time.</h1>
+                <p>Join over 50,000 shoppers who save an average of 30% on their favorite products. Connect your
+                    shopping lists and get instant alerts.</p>
+
+                <div class="hero-buttons">
+                    <button class="btn-outline"><i class="fas fa-chart-line"></i> Price Tracking</button>
+                    <button class="btn-outline"><i class="fas fa-bell"></i> Instant Alerts</button>
+                </div>
+            </div>
+
+            <div class="abstract-image-container">
+                <div class="sphere sphere-1"></div>
+                <div class="sphere sphere-2"></div>
+                <div class="sphere sphere-3"></div>
+                <div class="sphere sphere-4"></div>
+                <div class="abstract-bg"></div>
+            </div>
+        </div>
+
+        <!-- Right Panel with Login Form -->
+        <div class="right-panel">
+            <div class="login-container">
+                <h2 id="authTitle">Welcome back</h2>
+                <p class="subtitle" id="authSubtitle">Please enter your details to access your account.</p>
+
+                <div class="auth-tabs">
+                    <!-- Toggle between Sign In and Signup modes -->
+                    <button class="tab active" id="signinTab" onclick="switchTab('signin')">Sign In</button>
+                    <button class="tab" id="createTab" onclick="switchTab('create')">Create Account</button>
+                </div>
+
+                <!-- Shared Form for Login/Signup handled by auth.js -->
+                <form id="loginForm" onsubmit="handleLoginModern(event)">
+                    <!-- Name field - only visible in signup mode -->
+                    <div class="form-group" id="nameGroup" style="display: none;">
+                        <label for="fullName">Full Name</label>
+                        <input type="text" id="fullName" placeholder="Enter your full name">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" placeholder="name@company.com" required>
+                    </div>
+
+                    <div class="form-group" id="passwordGroup">
+                        <div class="label-row">
+                            <label for="password">Password</label>
+                            <a href="javascript:void(0)" class="forgot-pass" id="forgotPassLink">Forgot password?</a>
+                        </div>
+                        <div class="password-input">
+                            <!-- Password strength validation feedback -->
+                            <input type="password" id="password" placeholder="••••••••" required
+                                oninput="checkPasswordStrength()">
+                            <i class="fas fa-eye" onclick="togglePasswordVisibility()"></i>
+                        </div>
+                        <div id="passwordRequirements" class="password-requirements"
+                            style="display: none; margin-top: 1rem; padding: 1rem; background: rgba(255,255,255,0.03); border-radius: 8px; border: 1px solid var(--border-color);">
+                            <p
+                                style="font-size: 0.85rem; color: var(--text-gray); margin-bottom: 0.5rem; font-weight: 600;">
+                                Password Requirements:</p>
+                            <ul style="list-style: none; padding: 0; margin: 0;">
+                                <li id="req-length"
+                                    style="font-size: 0.8rem; color: #ef4444; margin-bottom: 0.3rem; display: flex; align-items: center; gap: 0.5rem;">
+                                    <i class="fas fa-times-circle"></i> 8+ Characters
+                                </li>
+                                <li id="req-upper"
+                                    style="font-size: 0.8rem; color: #ef4444; margin-bottom: 0.3rem; display: flex; align-items: center; gap: 0.5rem;">
+                                    <i class="fas fa-times-circle"></i> Uppercase Letter
+                                </li>
+                                <li id="req-lower"
+                                    style="font-size: 0.8rem; color: #ef4444; margin-bottom: 0.3rem; display: flex; align-items: center; gap: 0.5rem;">
+                                    <i class="fas fa-times-circle"></i> Lowercase Letter
+                                </li>
+                                <li id="req-number"
+                                    style="font-size: 0.8rem; color: #ef4444; margin-bottom: 0.3rem; display: flex; align-items: center; gap: 0.5rem;">
+                                    <i class="fas fa-times-circle"></i> Number
+                                </li>
+                                <li id="req-special"
+                                    style="font-size: 0.8rem; color: #ef4444; margin-bottom: 0.3rem; display: flex; align-items: center; gap: 0.5rem;">
+                                    <i class="fas fa-times-circle"></i> Special Character (@$!%*?&)
+                                </li>
+                            </ul>
+                        </div>
+                        <div style="margin-top: 0.8rem; text-align: right;" id="otpToggleLink">
+                            <a href="javascript:void(0)" onclick="toggleOtpMode()"
+                                style="font-size: 0.85rem; color: var(--accent-blue); text-decoration: none;">Login via
+                                OTP</a>
+                        </div>
+                    </div>
+
+                    <!-- OTP login section -->
+                    <div id="otpGroup" style="display: none;">
+                        <div class="form-group">
+                            <button type="button" class="btn-outline" onclick="sendLoginOtp()" id="sendOtpBtn"
+                                style="width: 100%; border-style: dashed;">
+                                <i class="fas fa-paper-plane"></i> Get One-Time Password
+                            </button>
+                            <div id="otpMessage"
+                                style="color: #10b981; font-size: 0.85rem; margin-top: 0.5rem; display: none;">
+                                OTP Sent to your email!
+                            </div>
+                        </div>
+
+                        <div class="form-group" id="otpInputGroup" style="display: none;">
+                            <label for="otpInput">Enter OTP</label>
+                            <input type="text" id="otpInput" placeholder="Enter 4-digit code" maxlength="4"
+                                style="letter-spacing: 5px; text-align: center; font-weight: 700; font-size: 1.2rem;">
+                            <div style="text-align: right; margin-top: 0.5rem;">
+                                <a href="javascript:void(0)" onclick="sendLoginOtp()"
+                                    style="font-size: 0.8rem; color: var(--text-gray);">Resend OTP</a>
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 1rem; text-align: right;">
+                            <a href="javascript:void(0)" onclick="toggleOtpMode()"
+                                style="font-size: 0.85rem; color: var(--accent-blue); text-decoration: none;">Back to
+                                Password</a>
+                        </div>
+                    </div>
+
+                    <div class="checkbox-group" id="rememberGroup" style="margin-bottom: 2rem;">
+                        <input type="checkbox" id="keep-signed-in">
+                        <label for="keep-signed-in">Keep me signed in</label>
+                    </div>
+
+                    <button type="submit" class="btn-primary" id="submitBtn">Sign In</button>
+                </form>
+
+                <p class="terms" style="margin-top: 1.5rem;">By continuing, you agree to our <strong>Terms of
+                        Service</strong> and <strong>Privacy
+                        Policy</strong>.</p>
+
+                <p style="text-align: center; margin-top: 1.5rem; font-size: 0.9rem; color: var(--text-gray);">
+                    <span id="switchText">Don't have an account? </span>
+                    <a href="javascript:void(0)" onclick="toggleAuthMode()" id="switchLink"
+                        style="color: var(--accent-blue); font-weight: 600; text-decoration: none;">Sign up here</a>
+                </p>
+
+                <div style="text-align: center; margin-top: 2rem;">
+                    <a href="admin_login.html"
+                        style="font-size: 0.8rem; color: var(--text-gray); text-decoration: none; opacity: 0.6;">Admin
+                        Portal Access</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/data.js"></script>
+    <!-- auth.js skipped on login page to avoid any handler conflict; form uses inline handlers only -->
+    <script>
+        function togglePasswordVisibility() {
+            const passwordInput = document.getElementById('password');
+            const icon = document.querySelector('.password-input i');
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+
+        let isLogin = true;
+        let isOtpMode = false;
+        let generatedOtp = null;
+
+        function switchTab(mode) {
+            const title = document.getElementById('authTitle');
+            const subtitle = document.getElementById('authSubtitle');
+            const signinTab = document.getElementById('signinTab');
+            const createTab = document.getElementById('createTab');
+            const submitBtn = document.getElementById('submitBtn');
+            const switchText = document.getElementById('switchText');
+            const switchLink = document.getElementById('switchLink');
+            const nameGroup = document.getElementById('nameGroup');
+            const fullNameInput = document.getElementById('fullName');
+            const forgotPassLink = document.getElementById('forgotPassLink');
+            const rememberGroup = document.getElementById('rememberGroup');
+            const otpToggleLink = document.getElementById('otpToggleLink');
+
+            // Reset OTP mode when switching tabs
+            if (isOtpMode) toggleOtpMode();
+
+            const passwordRequirements = document.getElementById('passwordRequirements');
+
+            if (mode === 'signin') {
+                isLogin = true;
+                title.textContent = 'Welcome back';
+                subtitle.textContent = 'Please enter your details to access your account.';
+                signinTab.classList.add('active');
+                createTab.classList.remove('active');
+                submitBtn.textContent = 'Sign In';
+                switchText.textContent = "Don't have an account? ";
+                switchLink.textContent = "Sign up here";
+
+                // Hide name field and password requirements for signin
+                nameGroup.style.display = 'none';
+                fullNameInput.removeAttribute('required');
+                passwordRequirements.style.display = 'none';
+
+                // Show forgot password, OTP toggle, and remember me for signin
+                forgotPassLink.style.display = 'inline';
+                otpToggleLink.style.display = 'block';
+                rememberGroup.style.display = 'block';
+            } else {
+                isLogin = false;
+                title.textContent = 'Create account';
+                subtitle.textContent = 'Start tracking prices and saving money today.';
+                signinTab.classList.remove('active');
+                createTab.classList.add('active');
+                submitBtn.textContent = 'Get Started';
+                switchText.textContent = "Already have an account? ";
+                switchLink.textContent = "Sign in here";
+
+                // Show name field and password requirements for signup
+                nameGroup.style.display = 'block';
+                fullNameInput.setAttribute('required', 'required');
+                passwordRequirements.style.display = 'block';
+                checkPasswordStrength(); // Initial check
+
+                // Hide forgot password, OTP toggle, and remember me for signup
+                forgotPassLink.style.display = 'none';
+                otpToggleLink.style.display = 'none';
+                rememberGroup.style.display = 'none';
+            }
+        }
+
+        function checkPasswordStrength() {
+            // Regex validation for password complexity
+            if (isLogin) return false;
+
+            const password = document.getElementById('password').value;
+            const reqs = {
+                length: password.length >= 8,
+                upper: /[A-Z]/.test(password),
+                lower: /[a-z]/.test(password),
+                number: /\d/.test(password),
+                special: /[@$!%*?&]/.test(password)
+            };
+            const updateReq = (id, met) => {
+                const el = document.getElementById(id);
+                if (met) {
+                    el.style.color = '#10b981';
+                    el.querySelector('i').className = 'fas fa-check-circle';
+                } else {
+                    el.style.color = '#ef4444';
+                    el.querySelector('i').className = 'fas fa-times-circle';
+                }
+            };
+
+            updateReq('req-length', reqs.length);
+            updateReq('req-upper', reqs.upper);
+            updateReq('req-lower', reqs.lower);
+            updateReq('req-number', reqs.number);
+            updateReq('req-special', reqs.special);
+            return Object.values(reqs).every(Boolean);
+        }
+
+        function toggleAuthMode() {
+            switchTab(isLogin ? 'create' : 'signin');
+        }
+
+        function toggleOtpMode() {
+            isOtpMode = !isOtpMode;
+            const passGroup = document.getElementById('passwordGroup');
+            const otpGroup = document.getElementById('otpGroup');
+            const passInput = document.getElementById('password');
+            const otpInput = document.getElementById('otpInput');
+            const submitBtn = document.getElementById('submitBtn');
+
+            if (isOtpMode) {
+                passGroup.style.display = 'none';
+                otpGroup.style.display = 'block';
+                passInput.removeAttribute('required');
+                passInput.value = ''; // Clear password field
+                submitBtn.textContent = 'Verify & Login';
+            } else {
+                passGroup.style.display = 'block';
+                otpGroup.style.display = 'none';
+                passInput.setAttribute('required', 'required');
+                otpInput.value = ''; // Clear OTP field
+                generatedOtp = null; // Reset OTP
+                submitBtn.textContent = 'Sign In';
+
+                // Reset OTP UI
+                document.getElementById('otpMessage').style.display = 'none';
+                document.getElementById('otpInputGroup').style.display = 'none';
+                document.getElementById('sendOtpBtn').innerHTML = '<i class="fas fa-paper-plane"></i> Get One-Time Password';
+            }
+        }
+
+        function sendLoginOtp() {
+            const email = document.getElementById('email').value;
+            if (!email || !email.includes('@')) {
+                alert("Please enter a valid email address first.");
+                return;
+            }
+
+            // Check if user exists (optional, but good UX)
+            const userExists = users.some(u => u.email.toLowerCase() === email.toLowerCase());
+            if (!userExists) {
+                alert("No account found with this email. Please Sign Up.");
+                return;
+            }
+
+            // Generate OTP
+            generatedOtp = Math.floor(1000 + Math.random() * 9000).toString();
+            console.log("Generated OTP:", generatedOtp); // For debugging
+
+            // Mock sending
+            alert(`SmartPrice Monitor Security:\nYour One-Time Password is: ${generatedOtp}`);
+
+            // UI Updates
+            document.getElementById('otpMessage').style.display = 'block';
+            document.getElementById('otpInputGroup').style.display = 'block';
+            document.getElementById('sendOtpBtn').innerHTML = '<i class="fas fa-check"></i> OTP Sent';
+        }
+
+        // Handle the login function specifically for the modern UI
+        function handleLoginModern(e) {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+
+            if (isLogin) {
+                // LOGIN MODE
+                let user;
+
+                if (isOtpMode) {
+                    const otpEntered = document.getElementById('otpInput').value;
+
+                    // Validate OTP input
+                    if (!otpEntered || otpEntered.trim() === '') {
+                        alert("Please enter the OTP sent to your email.");
+                        return;
+                    }
+
+                    if (!generatedOtp) {
+                        alert("Please click 'Get One-Time Password' first.");
+                        return;
+                    }
+
+                    if (otpEntered !== generatedOtp) {
+                        alert("Invalid OTP! Please try again.");
+                        return;
+                    }
+                    // OTP is valid, find user
+                    user = users.find(u => u.email.toLowerCase() === email.toLowerCase());
+                } else {
+                    // PASSWORD MODE
+                    const password = document.getElementById('password').value;
+                    user = users.find(u => u.email === email && u.password === password);
+                }
+
+                if (user) {
+                    localStorage.setItem('currentUser', JSON.stringify(user));
+                    if (user.role === 'admin') {
+                        window.location.href = 'admin.html';
+                    } else {
+                        window.location.href = 'user-dashboard.html';
+                    }
+                } else {
+                    // Fallback for demo user only (Password mode only usually, but let's allow generic)
+                    if (!isOtpMode && email === 'user@monitor.com' && document.getElementById('password').value === 'user123') {
+                        const simpleUser = { name: 'Demo User', email: email, role: 'user', orders: [] };
+                        localStorage.setItem('currentUser', JSON.stringify(simpleUser));
+                        window.location.href = 'user-dashboard.html';
+                    } else {
+                        alert(isOtpMode ? "Account not found." : "Invalid credentials. Please check your email and password.");
+                    }
+                }
+            } else {
+                // SIGNUP MODE
+                const name = document.getElementById('fullName').value;
+                const password = document.getElementById('password').value;
+
+                // Validate name
+                if (!name || name.trim().length < 2) {
+                    alert("Please enter your full name (at least 2 characters).");
+                    return;
+                }
+
+                // Validate Password Strength
+                if (!checkPasswordStrength()) {
+                    alert("Please meet all password requirements to create a strong password.");
+                    return;
+                }
+
+                // Check for existing email
+                const existingEmail = users.find(u => u.email.toLowerCase() === email.toLowerCase());
+
+                // Check for reserved emails
+                const reservedEmails = ['admin@monitor.com', 'admin@smartprice.com'];
+                const isReservedEmail = reservedEmails.some(reserved => email.toLowerCase() === reserved.toLowerCase());
+
+                if (isReservedEmail) {
+                    alert('This email is reserved for system use. Please use a different email.');
+                } else if (existingEmail) {
+                    alert('An account with this email already exists. Please login instead.');
+                } else {
+                    // Create new user
+                    const newUser = {
+                        id: Date.now(),
+                        name: name.trim(),
+                        email: email,
+                        password: password,
+                        role: 'user',
+                        orders: [],
+                        wishlist: [],
+                        cart: [],
+                        profileImage: null,
+                        createdAt: new Date().toISOString(),
+                        preferences: {
+                            theme: 'light',
+                            preferredPlatform: 'flipkart'
+                        }
+                    };
+
+                    users.push(newUser);
+                    saveUsers();
+                    localStorage.setItem('currentUser', JSON.stringify(newUser));
+
+                    alert('Account created successfully! Welcome to SmartPrice Monitor.');
+
+                    // Redirect to user dashboard
+                    setTimeout(() => {
+                        window.location.href = 'user-dashboard.html';
+                    }, 500);
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<!-- 
+    Project Documentation & About Page
+    Explains the academic origin and core features of the application.
+-->
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - SmartPrice Monitor Team</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/app-modern.css">
+    <link rel="stylesheet" href="css/hover-effects.css">
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛒</text></svg>">
+    <style>
+        .about-section {
+            padding: 4rem 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            background: radial-gradient(circle at top right, rgba(37, 99, 235, 0.05), transparent),
+                radial-gradient(circle at bottom left, rgba(16, 185, 129, 0.05), transparent);
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 5rem;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .section-header h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: linear-gradient(to right, #fff, var(--text-gray));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .section-header p {
+            color: var(--text-gray);
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2.5rem;
+            margin-bottom: 6rem;
+        }
+
+        .developer-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            animation: slideUp 0.8s ease-out backwards;
+            text-align: left;
+        }
+
+        .developer-card:nth-child(2) {
+            animation-delay: 0.15s;
+        }
+
+        .developer-card:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .developer-card:hover {
+            transform: translateY(-12px);
+            border-color: var(--accent-blue);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .card-image-wrapper {
+            width: 100%;
+            height: 450px;
+            position: relative;
+            background: #000;
+            overflow: hidden;
+        }
+
+        .card-image-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.9;
+            transition: transform 0.6s ease;
+        }
+
+        .developer-card:hover .card-image-wrapper img {
+            transform: scale(1.08);
+            opacity: 1;
+        }
+
+        .card-content {
+            padding: 2.5rem;
+            background: linear-gradient(180deg, var(--bg-card) 0%, #1a2533 100%);
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .dev-badge {
+            background: rgba(37, 99, 235, 0.15);
+            color: var(--accent-blue);
+            padding: 6px 14px;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            display: inline-block;
+            margin-bottom: 1.2rem;
+            width: fit-content;
+        }
+
+        .dev-name {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            color: white;
+            line-height: 1.2;
+        }
+
+        .dev-title {
+            color: var(--text-gray);
+            font-size: 1rem;
+            margin-bottom: 2rem;
+            font-weight: 500;
+            opacity: 0.8;
+        }
+
+        .info-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+        }
+
+        .info-label {
+            color: rgba(156, 163, 175, 0.5);
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .info-value {
+            color: #fff;
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .card-footer {
+            margin-top: auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .contact-btn {
+            color: var(--accent-blue);
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            transition: gap 0.3s;
+        }
+
+        .contact-btn:hover {
+            gap: 0.9rem;
+        }
+
+        @media (max-width: 480px) {
+            .team-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .card-image-wrapper {
+                height: 350px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="nav-left">
+            <a href="index.html" class="nav-brand">
+                <i class="fas fa-chart-line"></i>
+                <span>Smart Price Monitor</span>
+            </a>
+        </div>
+        <div class="nav-right">
+            <div class="nav-links">
+                <a href="wishlist.html" class="nav-link">Dashboard</a>
+                <a href="categories.html" class="nav-link">Categories</a>
+            </div>
+        </div>
+    </nav>
+
+    <style>
+        .premium-card {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 3rem 2rem;
+            border-radius: 32px;
+            text-align: center;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .premium-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.1) 0%, transparent 100%);
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+
+        .premium-card:hover {
+            transform: translateY(-15px) scale(1.02);
+            border-color: rgba(37, 99, 235, 0.5);
+            box-shadow: 0 40px 80px -20px rgba(0, 0, 0, 0.6);
+            background: rgba(30, 41, 59, 0.6);
+        }
+
+        .premium-card:hover::before {
+            opacity: 1;
+        }
+
+        .premium-card i {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            transition: transform 0.5s;
+        }
+
+        .premium-card:hover i {
+            transform: scale(1.2) rotate(5deg);
+        }
+
+        .premium-copy {
+            line-height: 1.8;
+            color: var(--text-gray);
+            font-size: 1.15rem;
+            max-width: 900px;
+            margin: 0 auto 4rem;
+            text-align: center;
+        }
+
+        .glow-button {
+            padding: 1rem 2rem;
+            border-radius: 100px;
+            text-decoration: none;
+            font-weight: 700;
+            transition: all 0.3s;
+            border: 1px solid transparent;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .support-btn {
+            background: rgba(37, 99, 235, 0.1);
+            color: var(--accent-blue);
+            border-color: rgba(37, 99, 235, 0.2);
+        }
+
+        .support-btn:hover {
+            background: var(--accent-blue);
+            color: white;
+            box-shadow: 0 0 20px rgba(37, 99, 235, 0.4);
+        }
+
+        .biz-btn {
+            background: rgba(245, 158, 11, 0.1);
+            color: #f59e0b;
+            border-color: rgba(245, 158, 11, 0.2);
+        }
+
+        .biz-btn:hover {
+            background: #f59e0b;
+            color: white;
+            box-shadow: 0 0 20px rgba(245, 158, 11, 0.4);
+        }
+
+        .social-link-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+
+        .social-link-icon:hover {
+            background: white;
+            color: black;
+            transform: translateY(-5px);
+        }
+    </style>
+
+    <div class="about-section">
+        <div class="section-header">
+            <h1>About <span style="color: var(--accent-blue);">Smart Price Monitor</span></h1>
+            <p
+                style="text-transform: uppercase; letter-spacing: 4px; font-weight: 700; font-size: 0.9rem; color: var(--accent-blue); margin-top: 1rem;">
+                Academic Project Implementation</p>
+        </div>
+
+        <div class="premium-copy"
+            style="text-align: justify; background: rgba(255,255,255,0.03); padding: 3rem; border-radius: 24px; border: 1px solid var(--border-color); margin-bottom: 4rem;">
+            <p style="margin-bottom: 1.5rem;">Smart Price Monitor is a frontend-based academic project developed as part
+                of our
+                Full Stack Development learning. The main objective of this project is to design a user-friendly website
+                that helps users compare product prices from multiple online platforms and make better purchasing
+                decisions.</p>
+
+            <p style="margin-bottom: 1.5rem;">This website allows users to search for products, browse them by
+                categories, compare prices, check estimated delivery time, add items to cart, and view complete product
+                details in one place. The project focuses on implementing core web development concepts such as HTML
+                structure, CSS styling, responsive design, and JavaScript-based interactivity including search
+                functionality, form validation, and error handling.</p>
+
+            <p style="margin-bottom: 1.5rem;">An Admin Dashboard is also included as a separate module to manage
+                products, categories, deals, and user feedback, demonstrating the concept of user and admin role
+                separation.</p>
+
+            <p>Overall, Smart Price Monitor is designed to simulate a real-world price comparison platform while helping
+                students
+                understand practical frontend development concepts through hands-on implementation.</p>
+        </div>
+
+        <div
+            style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2.5rem; margin-bottom: 6rem;">
+            <!-- Card 1: Core Technologies -->
+            <div class="premium-card">
+                <i class="fas fa-code" style="color: var(--accent-blue);"></i>
+                <h3 style="color: white; font-size: 1.5rem; font-weight: 800;">Academic Focus</h3>
+                <p style="color: var(--text-gray); font-size: 0.95rem; line-height: 1.6;">Built to demonstrate
+                    proficiency in modern frontend architecture and state management using vanilla JavaScript.</p>
+            </div>
+
+            <!-- Card 2: Platform Simulation -->
+            <div class="premium-card">
+                <i class="fas fa-project-diagram" style="color: #10b981;"></i>
+                <h3 style="color: white; font-size: 1.5rem; font-weight: 800;">System Design</h3>
+                <p style="color: var(--text-gray); font-size: 0.95rem; line-height: 1.6;">Implements a full
+                    user-to-admin workflow, mimicking real e-commerce data flow and role-based access.</p>
+            </div>
+
+            <!-- Card 3: Learning Journey -->
+            <div class="premium-card">
+                <i class="fas fa-graduation-cap" style="color: #f59e0b;"></i>
+                <h3 style="color: white; font-size: 1.5rem; font-weight: 800;">Development Goals</h3>
+                <p style="color: var(--text-gray); font-size: 0.95rem; line-height: 1.6;">Focuses on pixel-perfect
+                    UI/UX, responsive layouts, and robust client-side validation logic.</p>
+            </div>
+        </div>
+    </div>
+
+    <footer class="modern-footer">
+        <div class="footer-grid" style="display: flex; justify-content: center; text-align: center;">
+            <div class="footer-brand">
+                <div class="brand-logo" style="justify-content: center; margin-bottom: 1rem;">
+                    <i class="fas fa-chart-line"></i>
+                    <span>SmartPrice</span>
+                </div>
+                <p style="max-width: 600px; margin: 0 auto;">Advanced price tracking and real-time alerts to help you
+                    save money on every purchase across all major retailers.</p>
+            </div>
+        </div>
+
+    </footer>
+</body>
+
+</html>
